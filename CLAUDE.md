@@ -4,6 +4,8 @@ Fleetsurance ist eine Plattform für Flottenversicherungs-Management: Dashboards
 Unternehmen (z. B. Amazon DSPs) und für Versicherungsmakler, die Daten wie Schadensquoten
 einspielen. Fahrzeuge und Fahrer werden aus CoDriver synchronisiert (nur lesend).
 
+**Entwicklung und Betrieb: Kreativwerk.**
+
 ## Pflicht-Skills – bei JEDER Bearbeitung beachten
 
 | Phase | Skill | Wann |
