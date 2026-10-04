@@ -4,7 +4,7 @@ Fleetsurance ist eine Plattform für Flottenversicherungs-Management: Dashboards
 Unternehmen (z. B. Amazon DSPs) und für Versicherungsmakler, die Daten wie Schadensquoten
 einspielen. Fahrzeuge und Fahrer werden aus CoDriver synchronisiert (nur lesend).
 
-**Entwicklung und Betrieb: Kreativwerk.**
+**Entwicklung und Betrieb: Kreativwerk.** Vor jeder Arbeit lesen: `PRODUCT.md`, `PLAN.md`, `docs/DECISIONS.md`.
 
 ## Pflicht-Skills – bei JEDER Bearbeitung beachten
 
@@ -27,6 +27,7 @@ Hinweise:
 ## Design-Leitplanken
 
 - Modern, übersichtlich, viel Weißraum. **Weiß als Basis, Blau als Akzentfarbe** (angelehnt an sum-makler.de).
+- Richtung: **fintech-freundlich wie Revolut/Wise** – weichere Radien, große KPI-Karten, freundlich statt kühl (D22).
 - Farben und Abstände ausschließlich über Design-Tokens (später in `DESIGN.md`).
 - Motion: schnell und funktional im Dashboard (Feedback, Zustandswechsel, Kontinuität);
   höchstens ein bewusst gestalteter Moment pro Fläche. Kein Warten auf Lade-Choreografien.
