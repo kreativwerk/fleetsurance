@@ -6,6 +6,12 @@ einspielen. Fahrzeuge und Fahrer werden aus CoDriver synchronisiert (nur lesend)
 
 **Entwicklung und Betrieb: Kreativwerk.** Vor jeder Arbeit lesen: `PRODUCT.md`, `PLAN.md`, `docs/DECISIONS.md`.
 
+## Fragen an den Nutzer – immer so
+
+- Fragen **immer zum Anklicken** stellen (AskUserQuestion), nacheinander bzw. in kleinen Runden, nie als Fließtext-Liste.
+- Pro Frage eine Empfehlung als erste Option, markiert mit „(Empfohlen)“.
+- Danach die Antworten in `docs/DECISIONS.md` festhalten.
+
 ## Pflicht-Skills – bei JEDER Bearbeitung beachten
 
 | Phase | Skill | Wann |
