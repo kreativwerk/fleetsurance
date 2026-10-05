@@ -31,6 +31,7 @@ Hinweise:
 - Farben und Abstände ausschließlich über Design-Tokens (später in `DESIGN.md`).
 - Motion: schnell und funktional im Dashboard (Feedback, Zustandswechsel, Kontinuität);
   höchstens ein bewusst gestalteter Moment pro Fläche. Kein Warten auf Lade-Choreografien.
+- Schrift: **Inter** (400/600/700). UI nach **Apple HIG**, siehe `docs/design/apple-hig-review.md`.
 - Barrierefreiheit: WCAG 2.2 AA, Tastaturbedienung, Kontraste.
 
 ## Datenschutz – nicht verhandelbar
