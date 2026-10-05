@@ -29,6 +29,8 @@ Makler, DSP-Unternehmer und Design. „Empf.“ zeigt, ob die Entscheidung der E
 | D22 | Design | Fintech-freundlich wie Revolut oder Wise: Weiß, Blau als Akzent | — | Umsetzung mit impeccable im Modus *Operate*. Referenzen liegen in `docs/design-references/`. |
 | D23 | Reihenfolge | M1 Kern → M2 Cortex → M3 Schaden, eVB, Dokumente → M4 Defleeting und Berichte → M5 CoDriver | ✅ | |
 | D24 | Design-Überarbeitung | Reduzierter und minimalistischer als die ersten Entwürfe. Seitenmenü links schwarz. Die Schadensquote als 12 Monatsbalken statt als Plakette. Das Layout legt der Nutzer per Screenshot fest. | — | Bewusst nüchtern; die Hauptfläche bleibt weiß mit Blau als Akzent. |
+| D25 | Kacheln | Keine schwarzen Kacheln. Karten sind weiß, Akzentfarbe Blau #245EED. Schwarz bleibt nur für das Seitenmenü. | — | Wunsch des Nutzers (2026-10-05). |
+| D26 | Chat pro Schadensfall | Teilnehmer: DSP und Makler (Fahrer ab Phase 2). Inhalte: Text, Fotos und Dokumente (privat gespeichert, Fotos ohne EXIF), automatische Status-Zeilen. Makler können interne Notizen schreiben, die nur Makler sehen. Benachrichtigung in der App und per E-Mail ohne Inhalt. Lesebestätigung nur je Seite („Gelesen vom Makler“ bzw. „vom DSP“). Aufbewahrung wie die Schadenakte; Nachrichten können zurückgezogen, aber nicht gelöscht werden. Platzierung: Schadenakte mit Chat rechts, mobil als Tabs „Details“ und „Chat“. | ✅ | Interne Notizen werden per RLS getrennt (`sichtbarkeit = 'makler_intern'`). Sprachnachrichten und Gastzugänge sind bewusst nicht dabei. |
 
 ## Offen, vor dem Start mit Kunden
 

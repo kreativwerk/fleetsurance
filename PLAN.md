@@ -35,7 +35,7 @@ supabase/
 `makler` · `unternehmen` · `memberships` · `invitations` · `flotten` (mit `datenquelle`: codriver | cortex) ·
 `fahrzeuge` (FIN eindeutig pro Flotte) · `fahrer` (nur Mindestfelder) · `versicherer` · `vertraege` ·
 `praemien` · `schaeden` (Status: gemeldet → geprüft → beim Versicherer → reguliert/abgelehnt) ·
-`dauer_evb` (2 pro Kunde: Arval / Allgemein) · `zulassungsmeldungen` · `dokumente` · `defleetings` · `import_jobs` (mit Diff-Vorschau) ·
+`schaden_nachrichten` (Text, Sichtbarkeit `alle` | `makler_intern`, Typ `nachricht` | `status_ereignis`, zurückgezogen_am) · `schaden_anhaenge` · `schaden_lesestatus` (pro Seite) · `dauer_evb` (2 pro Kunde: Arval / Allgemein) · `zulassungsmeldungen` · `dokumente` · `defleetings` · `import_jobs` (mit Diff-Vorschau) ·
 `import_mappings` (pro Versicherer) · `codriver_connections` · `support_grants` · `audit_log` ·
 `retention_policies`
 
@@ -50,7 +50,7 @@ supabase/
 | **M0** | Monorepo, CI (Lint, Typecheck, Tests, RLS-Tests), Supabase-Projekt in Frankfurt, Vercel fra1, Auth (Google/E-Mail), Einladungs-Ablauf, i18n, Design-System (`DESIGN.md` und Tokens) | Ein Makler kann ein Unternehmen einladen und sich in beiden Sprachen anmelden. |
 | **M1** | Flottenübersicht, Versicherungsstatus, Dashboard für die Schadensquote, Makler-Upload mit Zuordnungs-Assistent | Ein Makler lädt eine Schadenliste hoch, und das Unternehmen sieht seine Quote. |
 | **M2** | Cortex-Upload (Fahrzeuge und Fahrer) mit Diff-Vorschau und FIN-Abgleich | Ein DSP spielt seine Flotte ohne Handeingabe ein. |
-| **M3** | Schadenmeldung und Makler-Ablauf, Dauer-eVB (Pflege, Kopieren, Teilen), Zulassungsmeldung, Dokumentenablage, E-Mail-Benachrichtigungen | Ein Schaden durchläuft den ganzen Status-Ablauf. |
+| **M3** | Schadenmeldung und Makler-Ablauf, Schadenakte mit Chat (Realtime, Anhänge, interne Notizen), Dauer-eVB (Pflege, Kopieren, Teilen), Zulassungsmeldung, Dokumentenablage, E-Mail-Benachrichtigungen | Ein Schaden durchläuft den ganzen Status-Ablauf. |
 | **M4** | Defleeting (Gutachten-Upload), Berichte als PDF und Excel, Löschfristen-Job | Der Makler exportiert einen Kundenbericht. |
 | **M5** | CoDriver-Verbindung: Freigabe, signierte Webhooks, nächtlicher Abgleich. Fotos erst nach dem Speicher-Fix in CoDriver. | Ein DSP verbindet CoDriver, und die Fahrzeuge erscheinen automatisch. |
 
