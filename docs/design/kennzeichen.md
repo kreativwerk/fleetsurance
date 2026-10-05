@@ -41,4 +41,4 @@ Alle Innenmaße skalieren proportional (Faktor = Höhe ÷ 34 bzw. ÷ 65).
 - Barrierefreiheit: `role="img"` mit `aria-label="Kennzeichen B ML 3021"`. Der Text bleibt markierbar und kopierbar.
 - Die Schrift wird nicht mit der Systemeinstellung skaliert (wie `withNoTextScaling` in CoDriver). Die Komponente skaliert über ihre Größe.
 - Neben dem Kennzeichen steht im Hauptbereich immer das Modell. Das Kennzeichen selbst bleibt der Schlüssel des Fahrzeugs.
-- Die VIN als QR-Code (`VinQrTile` in CoDriver, 74 bzw. 84 px) ist optional auf der mobilen Fahrzeugkarte und auf der Detailseite.
+- Den VIN-QR-Code (`VinQrTile` in CoDriver) übernimmt Fleetsurance **nicht**, auch nicht auf der mobilen Fahrzeugkarte (Entscheidung des Nutzers).

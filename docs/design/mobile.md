@@ -42,10 +42,8 @@ Untere Tab-Leiste (sicherer Bereich beachtet, Ziele mindestens 48 px groß):
 
 - Suche: Kennzeichen, Modell oder FIN. Daneben Knöpfe für Filter und Sortierung (öffnen ein Bottom-Sheet).
 - Status-Pillen zum horizontalen Wischen: Alle · Aktiv · Werkstatt · Defleeted
-- Fahrzeugkarte wie in CoDriver:
-  - links ein QR-Block mit der VIN (112 px)
-  - rechts das Kennzeichen (40 px), darunter ein Badge für die Halterart (Arval-Leasing / Eigentum / Miete), dann Modell, Baujahr und Antrieb, dazu ein Status-Chip
-- Ein Tippen öffnet das Fahrzeug. Ein Tippen auf den QR-Block zeigt den Code groß.
+- Fahrzeugkarte **ohne VIN-QR-Code** (Entscheidung des Nutzers, 2026-10-05): das Kennzeichen (40 px), darunter ein Badge für die Halterart (Arval-Leasing / Eigentum / Miete), dann Modell, Baujahr und Antrieb, dazu ein Status-Chip. Die Karten sind dadurch kompakter.
+- Ein Tippen öffnet das Fahrzeug.
 
 ## Schaden melden (mobil, wichtigster Ablauf)
 
