@@ -1,1 +1,7 @@
-{"tool":"higgsfield gpt_image_2_5 (high, 2k)","round":"comp","brief":"Inter + Apple HIG Korrekturen (D27)","approved":false}
+{
+ "tool": "higgsfield gpt_image_2_5 (high, 2k)",
+ "round": "comp",
+ "brief": "Inter + Apple HIG Korrekturen (D27)",
+ "approved": true,
+ "approved_at": "2026-10-05"
+}

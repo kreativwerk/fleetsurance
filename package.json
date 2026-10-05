@@ -1,0 +1,17 @@
+{
+  "name": "fleetsurance",
+  "private": true,
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0",
+    "turbo": "^2.11.7",
+    "typescript": "^5.9.0"
+  }
+}

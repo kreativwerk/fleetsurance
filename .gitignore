@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.turbo/
+coverage/
+*.tsbuildinfo
+.env*
+!.env.example
+.impeccable/config.local.json
+.impeccable/review/
+test-results/
+playwright-report/

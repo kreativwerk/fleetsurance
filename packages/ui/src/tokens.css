@@ -1,0 +1,68 @@
+/*
+ * Fleetsurance Design-Tokens
+ * Quelle: SUM-Palette (sum-makler.de), Apple-HIG-Review (docs/design/apple-hig-review.md).
+ * Farben, Radien und Abstände nur über diese Variablen verwenden.
+ */
+:root {
+  color-scheme: light;
+
+  /* Marke */
+  --fs-blue: #245eed;
+  --fs-blue-press: #1b4cc9;
+  --fs-blue-tint: #edf2fe;
+  --fs-blue-soft: #c7d6fb;
+  --fs-black: #0a0a0a;
+
+  /* Flächen */
+  --fs-page: #f5f5f7;
+  --fs-surface: #ffffff;
+  --fs-fill: #e9e9eb;
+  --fs-fill-subtle: #f2f2f4;
+  --fs-hairline: rgb(0 0 0 / 0.06);
+  --fs-separator: rgb(0 0 0 / 0.08);
+
+  /* Text */
+  --fs-ink: #101828;
+  --fs-ink-2: #3a3a3c;
+  --fs-muted: #6e6e73;
+  --fs-on-blue: #ffffff;
+  --fs-on-black: #f5f5f7;
+  --fs-on-black-muted: #a1a1a6;
+
+  /* Zustände (Text auf Tönung ≥ 4,5:1) */
+  --fs-ok: #1b7a43;
+  --fs-ok-tint: #e7f5ec;
+  --fs-warn: #8a5a12;
+  --fs-warn-tint: #fdf3e1;
+  --fs-error: #b42318;
+  --fs-error-tint: #fdecea;
+  --fs-neutral: #48484a;
+  --fs-neutral-tint: #efeff1;
+
+  /* Radien */
+  --fs-r-sm: 8px;
+  --fs-r-md: 12px;
+  --fs-r-card: 18px;
+  --fs-r-pill: 9999px;
+
+  /* Abstände (8er-Raster) */
+  --fs-s-1: 4px;
+  --fs-s-2: 8px;
+  --fs-s-3: 12px;
+  --fs-s-4: 16px;
+  --fs-s-5: 24px;
+  --fs-s-6: 32px;
+  --fs-s-7: 48px;
+
+  /* Bewegung */
+  --fs-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --fs-dur-fast: 120ms;
+  --fs-dur: 200ms;
+  --fs-dur-slow: 320ms;
+
+  /* Schrift */
+  --fs-font: "Inter Variable", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --fs-font-plate: "Barlow Condensed", "DIN Condensed", "DIN Alternate", "Arial Narrow", sans-serif;
+}
+
+/* Dunkles Schema ist vorbereitet (H11), wird nach M1 ausgestaltet. */

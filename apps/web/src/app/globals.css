@@ -1,0 +1,127 @@
+@import "tailwindcss";
+@import "@fleetsurance/ui/tokens.css";
+
+@theme inline {
+  --color-blue: var(--fs-blue);
+  --color-blue-press: var(--fs-blue-press);
+  --color-blue-tint: var(--fs-blue-tint);
+  --color-blue-soft: var(--fs-blue-soft);
+  --color-black: var(--fs-black);
+  --color-page: var(--fs-page);
+  --color-surface: var(--fs-surface);
+  --color-fill: var(--fs-fill);
+  --color-fill-subtle: var(--fs-fill-subtle);
+  --color-hairline: var(--fs-hairline);
+  --color-separator: var(--fs-separator);
+  --color-ink: var(--fs-ink);
+  --color-ink-2: var(--fs-ink-2);
+  --color-muted: var(--fs-muted);
+  --color-on-black-muted: var(--fs-on-black-muted);
+  --color-ok: var(--fs-ok);
+  --color-ok-tint: var(--fs-ok-tint);
+  --color-warn: var(--fs-warn);
+  --color-warn-tint: var(--fs-warn-tint);
+  --color-error: var(--fs-error);
+  --color-error-tint: var(--fs-error-tint);
+  --color-neutral: var(--fs-neutral);
+  --color-neutral-tint: var(--fs-neutral-tint);
+
+  --radius-sm: var(--fs-r-sm);
+  --radius-md: var(--fs-r-md);
+  --radius-card: var(--fs-r-card);
+
+  --font-sans: var(--fs-font);
+  --ease-out: var(--fs-ease-out);
+}
+
+@layer base {
+  html {
+    background: var(--fs-page);
+    color: var(--fs-ink);
+    font-family: var(--fs-font);
+    font-feature-settings: "ss03", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--fs-page);
+    caret-color: var(--fs-blue);
+  }
+
+  ::selection {
+    background: var(--fs-blue-soft);
+    color: var(--fs-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fs-blue);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  a {
+    text-underline-offset: 3px;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.18) transparent;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tracking-display {
+    letter-spacing: -0.02em;
+  }
+
+  .tracking-title {
+    letter-spacing: -0.01em;
+  }
+
+  .pressable {
+    transition:
+      transform var(--fs-dur-fast) var(--fs-ease-out),
+      background-color var(--fs-dur) var(--fs-ease-out),
+      color var(--fs-dur) var(--fs-ease-out);
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .material-bar {
+    background: rgb(255 255 255 / 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

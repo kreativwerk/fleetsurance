@@ -1,1 +1,7 @@
-{"tool":"higgsfield gpt_image_2_5 (high, 2k)","round":"comp","brief":"Schadenakte mit Chat (D26)","approved":false}
+{
+ "tool": "higgsfield gpt_image_2_5 (high, 2k)",
+ "round": "comp",
+ "brief": "Schadenakte mit Chat (D26)",
+ "approved": true,
+ "approved_at": "2026-10-05"
+}
