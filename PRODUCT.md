@@ -51,7 +51,9 @@ Success means: brokers no longer collect fleet data by hand, and DSPs see their 
   The data model follows BiPRO field semantics so BiPRO can be connected later.
 - **Damage flow:** the fleet manager reports the damage. The broker reviews it and forwards it to the insurer as PDF or email,
   then enters the claim number back into Fleetsurance. The DSP sees the status throughout.
-- **eVB:** the broker maintains eVB numbers. The DSP can copy and share them, and request new ones.
+- **eVB:** each customer has exactly two Dauer-eVB numbers: one for Arval leasing vehicles only, one for all other vehicles.
+  The broker maintains both. The DSP copies and shares them, and reports new registrations to the broker
+  ("Fahrzeug zur Zulassung melden"). There are no per-vehicle eVB numbers.
 - **Defleeting:** the broker uploads the expert's report.
 - **Notifications:** in-app, plus email without content details ("Neuer Schaden bei Kunde X – bitte einloggen"),
   sent through an EU mail provider.

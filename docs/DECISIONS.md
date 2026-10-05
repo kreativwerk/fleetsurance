@@ -20,7 +20,7 @@ Makler, DSP-Unternehmer und Design. „Empf.“ zeigt, ob die Entscheidung der E
 | D13 | Fahrerdaten | Nur das Minimum: Name, ID, Führerscheinklasse, Ablaufdatum, letzte Kontrolle | ✅ | Keine Leistungs- oder Verhaltensdaten (§ 87 BetrVG). |
 | D14 | Versicherungsdaten | Der Makler lädt hoch, über einen Zuordnungs-Assistenten pro Versicherer | ✅ | Das Datenmodell ist BiPRO-nah, BiPRO kommt später. |
 | D15 | Schadenablauf | Der Makler prüft und leitet als PDF oder E-Mail an den Versicherer weiter. Die Schadensnummer wird zurück eingetragen. | ✅ | Der Makler bleibt in der Kundenbeziehung. |
-| D16 | eVB | Der Makler pflegt die Nummern, der DSP kopiert sie oder fragt neue an | ✅ | |
+| D16 | eVB | Pro Kunde gibt es genau **zwei Dauer-eVB**: eine nur für Arval-Leasingfahrzeuge und eine für alle anderen Fahrzeuge. Der Makler pflegt beide. Der DSP kopiert oder teilt sie und meldet Neuzulassungen an den Makler. Es gibt keine eVB pro Fahrzeug. | ✅ | Fachliche Korrektur durch den Nutzer (2026-10-05). „eVB fehlt“ und die eVB-Spalte entfallen. |
 | D17 | Gutachter | Der Makler lädt das Gutachten hoch | — | Kein externer Zugang. Einfacher und mit weniger Beteiligten. |
 | D18 | Benachrichtigungen | In der App und per E-Mail ohne Inhalte, über einen EU-Mailanbieter | ✅ | |
 | D19 | Sprache | Deutsch und Englisch in V1 | — | Mit i18n-Struktur ab dem ersten Tag. |
