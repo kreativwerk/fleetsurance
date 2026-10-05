@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Check, ChevronLeft, FileText, ImageIcon } from "lucide-react";
@@ -20,10 +20,24 @@ import {
   type Schaden,
   type Seite,
 } from "@fleetsurance/domain";
-import { SchadenStatusPille } from "@/components/ui";
+import { SchadenStatusPille } from "@/components/pillen";
 import { SchadenChat } from "./chat";
 
 type Ansicht = "details" | "chat";
+const ansichten: Ansicht[] = ["details", "chat"];
+
+const mobilAbfrage = "(max-width: 767px)";
+function useIstMobil(): boolean {
+  return useSyncExternalStore(
+    (melden) => {
+      const mq = window.matchMedia(mobilAbfrage);
+      mq.addEventListener("change", melden);
+      return () => mq.removeEventListener("change", melden);
+    },
+    () => window.matchMedia(mobilAbfrage).matches,
+    () => false,
+  );
+}
 
 export function SchadenAkte(props: {
   schaden: Schaden;
@@ -35,6 +49,10 @@ export function SchadenAkte(props: {
 }) {
   const { schaden, fahrzeug } = props;
   const [ansicht, setAnsicht] = useState<Ansicht>("details");
+  const mobil = useIstMobil();
+  // Ab Tablet stehen beide Bereiche nebeneinander: dann keine Tab-Semantik.
+  const panelProps = (a: Ansicht) =>
+    mobil ? { id: `panel-${a}`, role: "tabpanel", "aria-labelledby": `tab-${a}`, tabIndex: 0 } : { id: `panel-${a}` };
 
   return (
     <>
@@ -66,22 +84,36 @@ export function SchadenAkte(props: {
         </div>
       </header>
 
-      {/* iOS-Segmented-Control (HIG H3) */}
-      <div role="tablist" aria-label="Ansicht" className="mb-4 grid grid-cols-2 rounded-[10px] bg-fill p-[3px] md:hidden">
-        {(["details", "chat"] as const).map((a) => (
+      {/* iOS-Segmented-Control (HIG H3), Tastatur nach APG-Tabs-Muster. Nur mobil ein Tab-Widget. */}
+      <div
+        role="tablist"
+        aria-label="Ansicht"
+        className="mb-4 grid grid-cols-2 rounded-[10px] bg-fill p-[3px] md:hidden"
+        onKeyDown={(e) => {
+          const ziel =
+            e.key === "ArrowRight" || e.key === "End" ? "chat" : e.key === "ArrowLeft" || e.key === "Home" ? "details" : null;
+          if (!ziel) return;
+          e.preventDefault();
+          setAnsicht(ziel);
+          document.getElementById(`tab-${ziel}`)?.focus();
+        }}
+      >
+        {ansichten.map((a) => (
           <button
             key={a}
+            id={`tab-${a}`}
             role="tab"
             type="button"
             aria-selected={ansicht === a}
             aria-controls={`panel-${a}`}
+            tabIndex={ansicht === a ? 0 : -1}
             onClick={() => setAnsicht(a)}
-            className={`relative h-9 rounded-[8px] text-[15px] font-semibold ${ansicht === a ? "text-ink" : "text-muted"}`}
+            className={`relative h-[38px] rounded-[8px] text-[15px] font-semibold ${ansicht === a ? "text-ink" : "text-ink-2"}`}
           >
             {ansicht === a && (
               <motion.span
                 layoutId="segment"
-                className="absolute inset-0 rounded-[8px] bg-surface shadow-[0_3px_8px_rgb(0_0_0/0.08),0_1px_1px_rgb(0_0_0/0.04)]"
+                className="absolute inset-0 rounded-[8px] bg-surface shadow-[var(--fs-shadow-segment)]"
                 transition={{ type: "spring", stiffness: 500, damping: 40 }}
               />
             )}
@@ -91,12 +123,14 @@ export function SchadenAkte(props: {
       </div>
 
       <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(340px,420px)]">
-        <div id="panel-details" role="tabpanel" className={`${ansicht === "details" ? "block" : "hidden"} min-w-0 md:block`}>
+        <div
+          {...panelProps("details")}
+          className={`${ansicht === "details" ? "block" : "hidden"} min-w-0 md:block`}
+        >
           <Details schaden={schaden} fahrzeug={fahrzeug} />
         </div>
         <div
-          id="panel-chat"
-          role="tabpanel"
+          {...panelProps("chat")}
           className={`${ansicht === "chat" ? "flex" : "hidden"} h-[calc(100dvh-290px)] min-h-[380px] flex-col overflow-hidden md:sticky md:top-6 md:flex md:h-[calc(100dvh-150px)] md:rounded-card md:border md:border-hairline md:bg-surface`}
         >
           <SchadenChat
@@ -143,7 +177,7 @@ function Details({ schaden, fahrzeug }: { schaden: Schaden; fahrzeug: Fahrzeug }
           {felder.map(([titel, wert]) => (
             <div key={titel}>
               <dt className="text-[13px] text-muted">{titel}</dt>
-              <dd className="tabular mt-0.5 text-[16px] font-medium">{wert}</dd>
+              <dd className="tabular mt-0.5 text-[16px] font-semibold">{wert}</dd>
             </div>
           ))}
         </dl>
@@ -207,7 +241,7 @@ function Details({ schaden, fahrzeug }: { schaden: Schaden; fahrzeug: Fahrzeug }
                 <li key={d.name} className="flex items-center gap-3 rounded-[12px] bg-fill-subtle px-3 py-2.5">
                   <FileText className="size-5 shrink-0 text-error" aria-hidden />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[15px] font-medium">{d.name}</span>
+                    <span className="block truncate text-[15px] font-semibold">{d.name}</span>
                     <span className="block text-[12.5px] text-muted">{formatGroesse(d.groesseKb)}</span>
                   </span>
                 </li>

@@ -67,3 +67,17 @@ describe("Testdaten", () => {
     expect(schaeden.every((s) => ids.has(s.fahrzeugId))).toBe(true);
   });
 });
+
+describe("Zeitvergleich über Offsets", () => {
+  it("sortiert UTC- und +02:00-Zeitpunkte richtig", () => {
+    const basis = { schadenId: "x", typ: "nachricht" as const, text: "", sichtbarkeit: "alle" as const };
+    const sortiert = sichtbareNachrichten(
+      [
+        { ...basis, id: "spaeter", am: "2026-10-03T15:00:00Z" },
+        { ...basis, id: "frueher", am: "2026-10-03T16:30:00+02:00" },
+      ],
+      "dsp",
+    );
+    expect(sortiert.map((n) => n.id)).toEqual(["frueher", "spaeter"]);
+  });
+});

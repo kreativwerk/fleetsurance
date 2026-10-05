@@ -6,6 +6,9 @@
   --color-blue-press: var(--fs-blue-press);
   --color-blue-tint: var(--fs-blue-tint);
   --color-blue-soft: var(--fs-blue-soft);
+  --color-blue-deep: var(--fs-blue-deep);
+  --color-blue-deeper: var(--fs-blue-deeper);
+  --color-on-blue: var(--fs-on-blue);
   --color-black: var(--fs-black);
   --color-page: var(--fs-page);
   --color-surface: var(--fs-surface);
@@ -103,7 +106,7 @@
   }
 
   .material-bar {
-    background: rgb(255 255 255 / 0.8);
+    background: var(--fs-material);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
   }

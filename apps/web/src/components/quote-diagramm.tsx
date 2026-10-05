@@ -7,9 +7,9 @@ import { aktuellerMonat, monatKurz, type Monatsquote } from "@fleetsurance/domai
 /*
  * Schadensquote je Monat: eine Reihe, daher keine Legende (Titel benennt sie).
  * Vergangene Monate #6A8CF0 (3,2:1 auf Weiß), aktueller Monat Markenblau.
- * Werte: aktueller Monat als Label, übrige per Hover/Fokus und in der Tabellenansicht.
+ * Werte: aktueller Monat als Label, übrige per Hover oder Tastaturfokus (jeder Balken ist fokussierbar).
  */
-const VERGANGEN = "#6a8cf0";
+const VERGANGEN = "var(--fs-chart-past)";
 const MAX = 100;
 
 export function QuoteDiagramm({
@@ -47,18 +47,22 @@ export function QuoteDiagramm({
           >
             <span className={`absolute -top-5 text-[12px] text-muted ${kompakt ? "left-0" : "right-0"}`}>Zielquote {ziel} %</span>
           </div>
-          <ol className="absolute inset-x-0 top-0 bottom-0 flex items-end gap-[2px]" aria-hidden>
+          <ol className="absolute inset-x-0 top-0 bottom-0 flex items-end gap-[2px]" aria-label="Schadensquote je Monat">
             {quoten.map((m, i) => {
               const istAktuell = m.monat === aktuell?.monat;
               const zeigeWert = m.quote !== null && (istAktuell || fokus === m.monat);
               return (
                 <li
                   key={m.monat}
-                  className="relative flex h-full flex-1 flex-col items-center justify-end"
+                  className="relative flex h-full flex-1 flex-col items-center justify-end rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+                  tabIndex={0}
+                  aria-label={`${monatKurz[m.monat - 1]}: ${m.quote === null ? "noch keine Daten" : `${m.quote} %`}`}
                   onPointerEnter={() => setFokus(m.monat)}
                   onPointerLeave={() => setFokus(null)}
+                  onFocus={() => setFokus(m.monat)}
+                  onBlur={() => setFokus(null)}
                 >
-                  <div className="relative flex w-full justify-center" style={{ height: hoehe }}>
+                  <div className="relative flex w-full justify-center" style={{ height: hoehe }} aria-hidden>
                     {m.quote !== null ? (
                       <motion.div
                         className="absolute bottom-0 rounded-t-[4px]"
@@ -89,6 +93,7 @@ export function QuoteDiagramm({
                     )}
                   </div>
                   <span
+                    aria-hidden
                     className={`mt-2 h-5 text-[12px] ${istAktuell ? "font-semibold text-ink" : "text-muted"}`}
                   >
                     {monatKurz[m.monat - 1]}
@@ -99,23 +104,6 @@ export function QuoteDiagramm({
           </ol>
         </div>
       </div>
-      <table className="sr-only">
-        <caption>Schadensquote je Monat</caption>
-        <thead>
-          <tr>
-            <th scope="col">Monat</th>
-            <th scope="col">Quote</th>
-          </tr>
-        </thead>
-        <tbody>
-          {quoten.map((m) => (
-            <tr key={m.monat}>
-              <th scope="row">{monatKurz[m.monat - 1]}</th>
-              <td>{m.quote === null ? "noch keine Daten" : `${m.quote} %`}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </figure>
   );
 }

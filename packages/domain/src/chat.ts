@@ -1,5 +1,8 @@
 import type { Lesestatus, Nachricht, Seite } from "./typen";
 
+/** Zeitpunkte numerisch vergleichen: Quellen liefern unterschiedliche Offsets (Z, +02:00). */
+const zeit = (iso: string) => Date.parse(iso);
+
 /**
  * Was eine Seite im Verlauf sehen darf. In der Datenbank erzwingt das später RLS;
  * diese Funktion spiegelt die Regel für UI und Tests.
@@ -7,7 +10,7 @@ import type { Lesestatus, Nachricht, Seite } from "./typen";
 export function sichtbareNachrichten(nachrichten: Nachricht[], betrachter: Seite): Nachricht[] {
   return nachrichten
     .filter((n) => n.sichtbarkeit === "alle" || betrachter === "makler")
-    .sort((a, b) => a.am.localeCompare(b.am));
+    .sort((a, b) => zeit(a.am) - zeit(b.am));
 }
 
 /** Hat die Gegenseite die letzte eigene Nachricht gelesen? (Nur je Seite, ohne Personen/Uhrzeit.) */
@@ -19,17 +22,17 @@ export function vonGegenseiteGelesen(
 ): string | undefined {
   const gegenseite: Seite = eigeneSeite === "dsp" ? "makler" : "dsp";
   const eigene = nachrichten.filter((n) => n.schadenId === schadenId && n.seite === eigeneSeite && n.typ === "nachricht");
-  const letzte = eigene.sort((a, b) => a.am.localeCompare(b.am)).at(-1);
+  const letzte = eigene.sort((a, b) => zeit(a.am) - zeit(b.am)).at(-1);
   const status = lesestatus.find((l) => l.schadenId === schadenId && l.seite === gegenseite);
   if (!letzte || !status) return undefined;
   const gelesen = nachrichten.find((n) => n.id === status.gelesenBis);
-  return gelesen && gelesen.am >= letzte.am ? letzte.id : undefined;
+  return gelesen && zeit(gelesen.am) >= zeit(letzte.am) ? letzte.id : undefined;
 }
 
 export function ungeleseneAnzahl(nachrichten: Nachricht[], lesestatus: Lesestatus[], seite: Seite, schadenId: string): number {
   const status = lesestatus.find((l) => l.schadenId === schadenId && l.seite === seite);
   const gelesen = status ? nachrichten.find((n) => n.id === status.gelesenBis) : undefined;
   return sichtbareNachrichten(nachrichten, seite).filter(
-    (n) => n.schadenId === schadenId && n.typ === "nachricht" && n.seite !== seite && (!gelesen || n.am > gelesen.am),
+    (n) => n.schadenId === schadenId && n.typ === "nachricht" && n.seite !== seite && (!gelesen || zeit(n.am) > zeit(gelesen.am)),
   ).length;
 }

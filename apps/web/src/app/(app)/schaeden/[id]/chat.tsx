@@ -37,7 +37,7 @@ export function SchadenChat({
   const [nachrichten, setNachrichten] = useState(start);
   const [text, setText] = useState("");
   const [anhang, setAnhang] = useState<Dokument | null>(null);
-  const ende = useRef<HTMLDivElement>(null);
+  const ende = useRef<HTMLLIElement>(null);
   const datei = useRef<HTMLInputElement>(null);
   const reduziert = useReducedMotion();
 
@@ -82,7 +82,7 @@ export function SchadenChat({
           return (
             <li key={n.id}>
               {neuerTag && (
-                <p className="tabular mb-3 text-center text-[12.5px] font-medium text-muted">{formatDatumKurz(n.am)}</p>
+                <p className="tabular mb-3 text-center text-[12.5px] font-semibold text-muted">{formatDatumKurz(n.am)}</p>
               )}
               {n.typ === "status_ereignis" ? (
                 <p className="text-center text-[13px] text-muted">
@@ -94,7 +94,7 @@ export function SchadenChat({
             </li>
           );
         })}
-        <div ref={ende} />
+        <li ref={ende} aria-hidden className="h-px" />
       </ol>
 
       <form
@@ -117,7 +117,7 @@ export function SchadenChat({
               <button
                 type="button"
                 onClick={() => setAnhang(null)}
-                className="grid size-8 place-items-center rounded-full text-muted hover:bg-fill"
+                className="-my-1.5 -mr-1.5 grid size-11 place-items-center rounded-full text-muted hover:bg-fill"
                 aria-label="Anhang entfernen"
               >
                 <X className="size-4" aria-hidden />
@@ -166,7 +166,7 @@ export function SchadenChat({
           <button
             type="submit"
             disabled={!text.trim() && !anhang}
-            className="pressable grid size-11 shrink-0 place-items-center rounded-full bg-blue text-white hover:bg-blue-press disabled:bg-fill disabled:text-muted"
+            className="pressable grid size-11 shrink-0 place-items-center rounded-full bg-blue text-on-blue hover:bg-blue-press disabled:bg-fill disabled:text-muted"
             aria-label="Senden"
           >
             <ArrowUp className="size-5" strokeWidth={2.4} aria-hidden />
@@ -196,7 +196,7 @@ function Blase({ n, eigen, gelesen, gegenseite }: { n: Nachricht; eigen: boolean
       <div
         className={`max-w-[82%] rounded-[20px] px-4 py-2.5 text-[16px] leading-[22px] md:max-w-[85%] md:text-[15px] ${
           eigen
-            ? "rounded-br-[6px] bg-blue text-white"
+            ? "rounded-br-[6px] bg-blue text-on-blue"
             : intern
               ? "rounded-bl-[6px] bg-warn-tint text-ink"
               : "rounded-bl-[6px] bg-fill text-ink"
@@ -205,9 +205,7 @@ function Blase({ n, eigen, gelesen, gegenseite }: { n: Nachricht; eigen: boolean
         {n.text && <p className="whitespace-pre-wrap">{n.text}</p>}
         {n.anhang && (
           <span
-            className={`mt-2 flex items-center gap-2 rounded-[12px] px-3 py-2 text-[14px] font-medium ${
-              eigen ? "bg-white text-ink" : "bg-surface text-ink"
-            }`}
+            className="mt-2 flex items-center gap-2 rounded-[12px] bg-surface px-3 py-2 text-[14px] font-semibold text-ink"
           >
             <FileText className="size-4 shrink-0 text-error" aria-hidden />
             <span className="truncate">{n.anhang.name}</span>

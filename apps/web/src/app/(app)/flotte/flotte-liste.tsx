@@ -10,7 +10,7 @@ import {
   type Fahrzeug,
   type FahrzeugStatus,
 } from "@fleetsurance/domain";
-import { FahrzeugStatusPille, Pille } from "@/components/ui";
+import { FahrzeugStatusPille, Pille } from "@/components/pillen";
 
 type Filter = "alle" | FahrzeugStatus;
 const filterLabel: Record<Filter, string> = { alle: "Alle", aktiv: "Aktiv", werkstatt: "Werkstatt", defleeted: "Defleeted" };
@@ -51,18 +51,17 @@ export function FlotteListe({ fahrzeuge }: { fahrzeuge: Fahrzeug[] }) {
             className="h-11 w-full rounded-full border border-hairline bg-surface pr-4 pl-11 text-[16px] placeholder:text-muted focus:border-blue focus:outline-none md:text-[14px]"
           />
         </label>
-        <div role="radiogroup" aria-label="Nach Status filtern" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 md:pb-0">
+        <div role="group" aria-label="Nach Status filtern" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 md:pb-0">
           {(Object.keys(filterLabel) as Filter[]).map((f) => {
             const aktiv = filter === f;
             return (
               <button
                 key={f}
                 type="button"
-                role="radio"
-                aria-checked={aktiv}
+                aria-pressed={aktiv}
                 onClick={() => setFilter(f)}
-                className={`pressable relative inline-flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-[14.5px] font-semibold ${
-                  aktiv ? "text-white" : "border border-hairline bg-surface text-ink hover:bg-fill-subtle"
+                className={`pressable relative inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14.5px] font-semibold ${
+                  aktiv ? "text-on-blue" : "border border-hairline bg-surface text-ink hover:bg-fill-subtle"
                 }`}
               >
                 {aktiv && (
@@ -73,7 +72,7 @@ export function FlotteListe({ fahrzeuge }: { fahrzeuge: Fahrzeug[] }) {
                   />
                 )}
                 <span className="relative">{filterLabel[f]}</span>
-                <span className={`tabular relative text-[13px] ${aktiv ? "text-white/80" : "text-muted"}`}>{anzahl[f]}</span>
+                <span className={`tabular relative text-[13px] ${aktiv ? "text-on-blue" : "text-muted"}`}>{anzahl[f]}</span>
               </button>
             );
           })}
@@ -95,21 +94,21 @@ export function FlotteListe({ fahrzeuge }: { fahrzeuge: Fahrzeug[] }) {
             <table className="w-full text-left text-[14.5px]">
               <thead>
                 <tr className="border-b border-separator text-[13px] text-muted">
-                  <th scope="col" className="py-3 pl-6 font-medium">Kennzeichen</th>
-                  <th scope="col" className="py-3 font-medium">Fahrzeug</th>
-                  <th scope="col" className="py-3 font-medium">Halter</th>
-                  <th scope="col" className="py-3 font-medium">Standort</th>
-                  <th scope="col" className="py-3 pr-6 font-medium">Status</th>
+                  <th scope="col" className="py-3 pl-6 font-semibold">Kennzeichen</th>
+                  <th scope="col" className="py-3 font-semibold">Fahrzeug</th>
+                  <th scope="col" className="py-3 font-semibold">Halter</th>
+                  <th scope="col" className="py-3 font-semibold">Standort</th>
+                  <th scope="col" className="py-3 pr-6 font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {sichtbar.map((f) => (
-                  <tr key={f.id} className={`border-b border-hairline last:border-0 ${f.status === "defleeted" ? "opacity-60" : ""}`}>
+                  <tr key={f.id} className="border-b border-hairline last:border-0">
                     <td className="py-3 pl-6">
                       <LicensePlate kennzeichen={f.kennzeichen} ort={f.kennzeichenOrt} groesse={30} />
                     </td>
                     <td className="py-3 pr-4">
-                      <p className="font-medium">
+                      <p className="font-semibold">
                         {f.hersteller} {f.modell}
                       </p>
                       <p className="text-[13px] text-muted">
@@ -131,7 +130,7 @@ export function FlotteListe({ fahrzeuge }: { fahrzeuge: Fahrzeug[] }) {
             {sichtbar.map((f) => (
               <li
                 key={f.id}
-                className={`rounded-[16px] border border-hairline bg-surface p-4 ${f.status === "defleeted" ? "opacity-60" : ""}`}
+                className="rounded-[16px] border border-hairline bg-surface p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <LicensePlate kennzeichen={f.kennzeichen} ort={f.kennzeichenOrt} groesse={40} />

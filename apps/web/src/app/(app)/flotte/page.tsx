@@ -1,4 +1,4 @@
-import { testdaten } from "@fleetsurance/domain";
+import { testdaten } from "@/lib/daten";
 import { Seitenkopf } from "@/components/ui";
 import { FlotteListe } from "./flotte-liste";
 

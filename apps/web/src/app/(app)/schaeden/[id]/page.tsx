@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { testdaten } from "@fleetsurance/domain";
-import { aktuelleSeite, fahrzeugZu, schadenNachId } from "@/lib/daten";
+import { aktuelleSeite, fahrzeugZu, schadenNachId, testdaten } from "@/lib/daten";
 import { SchadenAkte } from "./akte";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -24,7 +23,7 @@ export default async function SchadenSeite({ params }: { params: Promise<{ id: s
       schaden={schaden}
       fahrzeug={fahrzeugZu(schaden)}
       nachrichten={nachrichten}
-      lesestatus={testdaten.lesestatus}
+      lesestatus={testdaten.lesestatus.filter((l) => l.schadenId === id)}
       seite={aktuelleSeite}
       autor={`${vorname} ${nachname}`}
     />

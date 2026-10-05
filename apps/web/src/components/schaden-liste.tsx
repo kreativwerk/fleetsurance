@@ -12,10 +12,10 @@ export function SchadenListe({ schaeden }: { schaeden: Schaden[] }) {
       <table className="hidden w-full text-left text-[14.5px] md:table">
         <thead>
           <tr className="border-b border-separator text-[13px] text-muted">
-            <th scope="col" className="pb-2.5 font-medium">Datum</th>
-            <th scope="col" className="pb-2.5 font-medium">Kennzeichen</th>
-            <th scope="col" className="pb-2.5 font-medium">Schadenart</th>
-            <th scope="col" className="pb-2.5 font-medium">Status</th>
+            <th scope="col" className="pb-2.5 font-semibold">Datum</th>
+            <th scope="col" className="pb-2.5 font-semibold">Kennzeichen</th>
+            <th scope="col" className="pb-2.5 font-semibold">Schadenart</th>
+            <th scope="col" className="pb-2.5 font-semibold">Status</th>
             <th scope="col" className="w-8 pb-2.5"><span className="sr-only">Öffnen</span></th>
           </tr>
         </thead>
@@ -23,13 +23,13 @@ export function SchadenListe({ schaeden }: { schaeden: Schaden[] }) {
           {schaeden.map((s) => {
             const f = fahrzeugZu(s);
             return (
-              <tr key={s.id} className="group relative border-b border-hairline last:border-0 hover:bg-fill-subtle/60">
+              <tr key={s.id} className="group relative border-b border-hairline last:border-0 hover:bg-fill-subtle/60 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 has-[a:focus-visible]:outline-blue">
                 <td className="tabular py-3 pr-4 whitespace-nowrap text-ink-2">{formatDatum(s.am)}</td>
                 <td className="py-3 pr-4">
                   <LicensePlate kennzeichen={f.kennzeichen} ort={f.kennzeichenOrt} groesse={28} />
                 </td>
                 <td className="py-3 pr-4">
-                  <Link href={`/schaeden/${s.id}`} className="font-medium text-ink after:absolute after:inset-0 focus-visible:outline-none">
+                  <Link href={`/schaeden/${s.id}`} className="font-semibold text-ink after:absolute after:inset-0 focus-visible:outline-none">
                     {s.art}
                   </Link>
                 </td>

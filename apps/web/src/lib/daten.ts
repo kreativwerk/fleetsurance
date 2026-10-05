@@ -1,8 +1,14 @@
 /**
  * Datenzugriff für M0: synthetische Testdaten aus @fleetsurance/domain.
+ * Nur auf dem Server nutzbar: Client-Komponenten bekommen Daten ausschließlich als Props,
+ * damit z. B. interne Makler-Notizen nie im Browser-Bundle landen.
  * Ab M1 kommen die Daten aus Supabase (RLS); die Signaturen bleiben gleich.
  */
-import { testdaten, type Fahrzeug, type Schaden } from "@fleetsurance/domain";
+import "server-only";
+import * as testdaten from "@fleetsurance/domain/testdaten";
+import type { Fahrzeug, Schaden } from "@fleetsurance/domain";
+
+export { testdaten };
 
 export const aktuelleSeite = testdaten.nutzer.seite;
 
@@ -21,9 +27,11 @@ export function offeneSchaeden(): Schaden[] {
 }
 
 export function schaedenNeuesteZuerst(): Schaden[] {
-  return [...testdaten.schaeden].sort((a, b) => b.am.localeCompare(a.am));
+  return [...testdaten.schaeden].sort((a, b) => Date.parse(b.am) - Date.parse(a.am));
 }
 
-export function initialen(vorname: string, nachname: string): string {
-  return `${vorname.charAt(0)}${nachname.charAt(0)}`.toUpperCase();
+/** Was die App-Hülle (Client) über den angemeldeten Nutzer wissen darf. */
+export function nutzerKurz() {
+  const { vorname, nachname, rolle } = testdaten.nutzer;
+  return { name: `${vorname} ${nachname}`, vorname, nachname, rolle };
 }

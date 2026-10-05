@@ -2,13 +2,14 @@ import Link from "next/link";
 import { BarChart3, Database, FileText, Settings, UserRound } from "lucide-react";
 import { Seitenkopf } from "@/components/ui";
 import { DauerEvbKarte, MaklerKarte, ZeilenPfeil } from "@/components/karten";
+import { nutzerKurz, testdaten } from "@/lib/daten";
 
 export const metadata = { title: "Mehr" };
 
 const eintraege = [
   { href: "/dokumente", label: "Dokumente", icon: FileText },
   { href: "/auswertung", label: "Auswertung", icon: BarChart3 },
-  { href: "/einstellungen", label: "Datenquellen", icon: Database },
+  { href: "/einstellungen#datenquellen", label: "Datenquellen", icon: Database },
   { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ] as const;
 
@@ -17,7 +18,7 @@ export default function Mehr() {
     <>
       <Seitenkopf titel="Mehr" />
       <div className="space-y-4">
-        <DauerEvbKarte />
+        <DauerEvbKarte evbs={testdaten.dauerEvb} />
         <nav aria-label="Weitere Bereiche" className="overflow-hidden rounded-card border border-hairline bg-surface">
           <ul>
             {eintraege.map(({ href, label, icon: Icon }) => (
@@ -33,10 +34,10 @@ export default function Mehr() {
             ))}
           </ul>
         </nav>
-        <MaklerKarte />
+        <MaklerKarte makler={testdaten.makler} />
         <p className="flex items-center justify-center gap-2 pt-2 text-[13px] text-muted">
           <UserRound className="size-4" aria-hidden />
-          Angemeldet als Anna Berger · Fuhrparkleitung
+          Angemeldet als {nutzerKurz().name} · {nutzerKurz().rolle}
         </p>
       </div>
     </>

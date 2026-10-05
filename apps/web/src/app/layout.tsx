@@ -3,6 +3,9 @@ import "@fontsource-variable/inter";
 import "@fontsource/barlow-condensed/600.css";
 import "./globals.css";
 
+// Die CSP nutzt einen Nonce pro Anfrage (middleware.ts); dafür muss jede Seite dynamisch gerendert werden.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: { default: "Fleetsurance", template: "%s · Fleetsurance" },
   description: "Flottenversicherung im Blick: Fahrzeuge, Schäden, Schadensquote und Dauer-eVB.",

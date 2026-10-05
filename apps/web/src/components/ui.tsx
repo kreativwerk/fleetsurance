@@ -1,13 +1,8 @@
 import Link from "next/link";
 import { ChevronDown, Plus, Search } from "lucide-react";
-import {
-  fahrzeugStatusLabel,
-  schadenStatusLabel,
-  testdaten,
-  type FahrzeugStatus,
-  type SchadenStatus,
-} from "@fleetsurance/domain";
 import { Avatar, Logo } from "./shell";
+export { FahrzeugStatusPille, Pille, SchadenStatusPille } from "./pillen";
+import { nutzerKurz, testdaten } from "@/lib/daten";
 
 export function Karte({
   children,
@@ -20,38 +15,6 @@ export function Karte({
       {children}
     </Tag>
   );
-}
-
-const ton = {
-  blau: "bg-blue-tint text-blue",
-  gelb: "bg-warn-tint text-warn",
-  gruen: "bg-ok-tint text-ok",
-  grau: "bg-neutral-tint text-neutral",
-} as const;
-
-export function Pille({ farbe, children }: { farbe: keyof typeof ton; children: React.ReactNode }) {
-  return (
-    <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-[12.5px] font-semibold whitespace-nowrap ${ton[farbe]}`}>
-      {children}
-    </span>
-  );
-}
-
-const schadenFarbe: Record<SchadenStatus, keyof typeof ton> = {
-  gemeldet: "blau",
-  geprueft: "blau",
-  beim_versicherer: "gelb",
-  reguliert: "grau",
-};
-
-export function SchadenStatusPille({ status }: { status: SchadenStatus }) {
-  return <Pille farbe={schadenFarbe[status]}>{schadenStatusLabel[status]}</Pille>;
-}
-
-const fahrzeugFarbe: Record<FahrzeugStatus, keyof typeof ton> = { aktiv: "gruen", werkstatt: "gelb", defleeted: "grau" };
-
-export function FahrzeugStatusPille({ status }: { status: FahrzeugStatus }) {
-  return <Pille farbe={fahrzeugFarbe[status]}>{fahrzeugStatusLabel[status]}</Pille>;
 }
 
 export function SchadenMeldenKnopf({ breit = false }: { breit?: boolean }) {
@@ -73,7 +36,7 @@ function FirmenPille() {
   return (
     <button
       type="button"
-      className="pressable inline-flex h-10 min-w-0 items-center gap-2 rounded-full border border-hairline bg-surface px-4 text-[14px] font-medium text-ink hover:bg-fill-subtle"
+      className="pressable inline-flex h-11 min-w-0 items-center gap-2 rounded-full border border-hairline bg-surface px-4 text-[14px] font-semibold text-ink hover:bg-fill-subtle"
       aria-label={`Unternehmen wechseln, aktuell ${name}`}
     >
       <span className="truncate">
@@ -118,7 +81,7 @@ export function Seitenkopf({
             </svg>
           </Link>
         )}
-        <Avatar hell />
+        <Avatar nutzer={nutzerKurz()} hell />
       </div>
       <div className="mt-4 flex items-center gap-4 md:mt-0">
         <div className="min-w-0">

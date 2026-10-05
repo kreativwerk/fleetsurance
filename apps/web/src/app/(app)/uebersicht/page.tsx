@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { ArrowDown, ArrowUp, ShieldAlert, Truck } from "lucide-react";
-import { testdaten, veraenderungPunkte } from "@fleetsurance/domain";
+import { veraenderungPunkte } from "@fleetsurance/domain";
 import { Abschnittstitel, Karte, SchadenMeldenKnopf, Seitenkopf } from "@/components/ui";
 import { QuoteDiagramm } from "@/components/quote-diagramm";
 import { DauerEvbKarte, MaklerKarte } from "@/components/karten";
 import { SchadenListe } from "@/components/schaden-liste";
-import { offeneSchaeden, schaedenNeuesteZuerst } from "@/lib/daten";
+import { offeneSchaeden, schaedenNeuesteZuerst, testdaten } from "@/lib/daten";
 
 export const metadata = { title: "Übersicht" };
-// Begrüßung hängt von der Uhrzeit ab; ab M1 kommen die Daten pro Anfrage aus Supabase.
-export const dynamic = "force-dynamic";
 
 function gruss(): string {
   const stunde = Number(
@@ -37,6 +35,7 @@ export default function Uebersicht() {
               <p className="tabular tracking-display mt-1 text-[44px] leading-none font-bold md:text-[40px]">{aktuell} %</p>
               <p className={`mt-2 inline-flex items-center gap-1 text-[14px] font-semibold ${besser ? "text-ok" : "text-error"}`}>
                 {besser ? <ArrowDown className="size-4" aria-hidden /> : <ArrowUp className="size-4" aria-hidden />}
+                <span className="sr-only">{besser ? "Gesunken um" : "Gestiegen um"}</span>
                 {Math.abs(delta)} Pkt. <span className="font-normal text-muted">ggü. Vorjahr</span>
               </p>
               <div className="mt-4 md:hidden">
@@ -72,7 +71,7 @@ export default function Uebersicht() {
           </Karte>
 
           <div className="lg:hidden">
-            <DauerEvbKarte />
+            <DauerEvbKarte evbs={testdaten.dauerEvb} />
           </div>
 
           <section className="pt-2 md:rounded-card md:border md:border-hairline md:bg-surface md:p-6 md:pt-6">
@@ -81,13 +80,13 @@ export default function Uebersicht() {
           </section>
 
           <div className="lg:hidden">
-            <MaklerKarte />
+            <MaklerKarte makler={testdaten.makler} />
           </div>
         </div>
 
         <aside className="hidden space-y-5 lg:block" aria-label="Dauer-eVB und Makler">
-          <DauerEvbKarte />
-          <MaklerKarte />
+          <DauerEvbKarte evbs={testdaten.dauerEvb} />
+          <MaklerKarte makler={testdaten.makler} />
         </aside>
       </div>
     </>

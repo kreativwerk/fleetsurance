@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Car, ChevronRight, Copy, FileText, Mail, Phone, Share } from "lucide-react";
-import { testdaten, type DauerEvb } from "@fleetsurance/domain";
+import type { DauerEvb, Makler } from "@fleetsurance/domain";
 import { useToast } from "./toast";
 
 const evbLabel: Record<DauerEvb["art"], string> = {
@@ -20,9 +20,8 @@ async function kopiere(text: string): Promise<boolean> {
 }
 
 /** Zwei Dauer-eVB pro Kunde (D16): Arval-Leasing und alle anderen Fahrzeuge. */
-export function DauerEvbKarte() {
+export function DauerEvbKarte({ evbs }: { evbs: DauerEvb[] }) {
   const { zeige } = useToast();
-  const evbs = testdaten.dauerEvb;
 
   async function teilen() {
     const text = evbs.map((e) => `${evbLabel[e.art]}: eVB ${e.nummer}`).join("\n");
@@ -30,18 +29,18 @@ export function DauerEvbKarte() {
       try {
         await navigator.share({ title: "Dauer-eVB", text });
         return;
-      } catch {
-        // Teilen abgebrochen: nichts tun.
-        return;
+      } catch (fehler) {
+        // Abgebrochen: nichts tun. Sonst (z. B. NotAllowedError) unten auf Kopieren ausweichen.
+        if (fehler instanceof DOMException && fehler.name === "AbortError") return;
       }
     }
     if (await kopiere(text)) zeige("Beide eVB kopiert");
   }
 
   return (
-    <section aria-labelledby="evb-titel" className="rounded-card bg-blue p-5 text-white md:p-6">
+    <section aria-labelledby="evb-titel" className="rounded-card bg-blue p-5 text-on-blue md:p-6">
       <div className="mb-4 flex items-center gap-3">
-        <span className="grid size-10 place-items-center rounded-[12px] bg-white/15">
+        <span className="grid size-10 place-items-center rounded-[12px] bg-blue-deep">
           <FileText className="size-5" aria-hidden />
         </span>
         <h2 id="evb-titel" className="tracking-title text-[21px] font-semibold">
@@ -50,7 +49,7 @@ export function DauerEvbKarte() {
       </div>
       <ul className="space-y-2.5">
         {evbs.map((evb) => (
-          <li key={evb.art} className="flex items-center gap-3 rounded-[14px] bg-white px-4 py-3 text-ink">
+          <li key={evb.art} className="flex items-center gap-3 rounded-[14px] bg-surface px-4 py-3 text-ink">
             <div className="min-w-0 flex-1">
               <p className="text-[13px] text-muted">{evbLabel[evb.art]}</p>
               <p className="tabular text-[17px] font-semibold tracking-wide">eVB {evb.nummer}</p>
@@ -72,7 +71,7 @@ export function DauerEvbKarte() {
       <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-[1fr_auto] md:grid-cols-1 2xl:grid-cols-[1fr_auto]">
         <Link
           href="/zulassung"
-          className="pressable inline-flex h-11 items-center justify-center gap-2 rounded-full bg-white px-4 text-[15px] font-semibold text-blue hover:bg-blue-tint"
+          className="pressable inline-flex h-11 items-center justify-center gap-2 rounded-full bg-surface px-4 text-[15px] font-semibold text-blue hover:bg-blue-tint"
         >
           <Car className="size-[18px]" aria-hidden />
           Fahrzeug zur Zulassung melden
@@ -80,7 +79,7 @@ export function DauerEvbKarte() {
         <button
           type="button"
           onClick={teilen}
-          className="pressable inline-flex h-11 items-center justify-center gap-2 rounded-full bg-white/15 px-5 text-[15px] font-semibold text-white hover:bg-white/25"
+          className="pressable inline-flex h-11 items-center justify-center gap-2 rounded-full bg-blue-deep px-5 text-[15px] font-semibold text-on-blue hover:bg-blue-deeper"
         >
           <Share className="size-[18px]" aria-hidden />
           Teilen
@@ -90,11 +89,11 @@ export function DauerEvbKarte() {
   );
 }
 
-export function MaklerKarte() {
-  const { name, telefon, email } = testdaten.makler;
+export function MaklerKarte({ makler }: { makler: Makler }) {
+  const { name, telefon, email } = makler;
   return (
     <section aria-labelledby="makler-titel" className="rounded-card border border-hairline bg-surface p-5 md:p-6">
-      <p id="makler-titel" className="text-[14px] font-medium text-muted">
+      <p id="makler-titel" className="text-[14px] font-semibold text-muted">
         Dein Makler
       </p>
       <p className="tracking-title mt-1 text-[21px] leading-snug font-semibold">{name}</p>

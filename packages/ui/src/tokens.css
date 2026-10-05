@@ -11,6 +11,9 @@
   --fs-blue-press: #1b4cc9;
   --fs-blue-tint: #edf2fe;
   --fs-blue-soft: #c7d6fb;
+  --fs-blue-deep: #1a47c2; /* Weiß darauf 7,7:1 */
+  --fs-blue-deeper: #163fa8;
+  --fs-chart-past: #6a8cf0; /* vergangene Monate, 3,2:1 auf Weiß */
   --fs-black: #0a0a0a;
 
   /* Flächen */
@@ -20,6 +23,8 @@
   --fs-fill-subtle: #f2f2f4;
   --fs-hairline: rgb(0 0 0 / 0.06);
   --fs-separator: rgb(0 0 0 / 0.08);
+  --fs-material: rgb(255 255 255 / 0.8);
+  --fs-shadow-segment: 0 3px 8px rgb(0 0 0 / 0.08), 0 1px 1px rgb(0 0 0 / 0.04);
 
   /* Text */
   --fs-ink: #101828;

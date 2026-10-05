@@ -3,22 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { testdaten } from "@fleetsurance/domain";
 import { hauptnavigation, istAktiv, tabs } from "./navigation";
-import { initialen } from "@/lib/daten";
+import { initialen } from "@fleetsurance/domain";
+
+export type NutzerKurz = { name: string; vorname: string; nachname: string; rolle: string };
 
 export function Logo({ klein = false }: { klein?: boolean }) {
   return (
     <svg width={klein ? 28 : 32} height={klein ? 28 : 32} viewBox="0 0 32 32" aria-hidden>
       <rect width="32" height="32" rx="9" fill="var(--fs-blue)" />
-      <path d="M16 6.5 8.5 9.3v6.1c0 4.9 3.2 8.6 7.5 10.1 4.3-1.5 7.5-5.2 7.5-10.1V9.3z" fill="#fff" />
+      <path d="M16 6.5 8.5 9.3v6.1c0 4.9 3.2 8.6 7.5 10.1 4.3-1.5 7.5-5.2 7.5-10.1V9.3z" fill="var(--fs-on-blue)" />
       <path d="m12.4 16 2.6 2.6 4.8-5.1" fill="none" stroke="var(--fs-blue)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-export function Avatar({ hell = false }: { hell?: boolean }) {
-  const { vorname, nachname } = testdaten.nutzer;
+export function Avatar({ nutzer, hell = false }: { nutzer: NutzerKurz; hell?: boolean }) {
+  const { vorname, nachname } = nutzer;
   return (
     <span
       className={`grid size-10 place-items-center rounded-full text-[13px] font-semibold ${
@@ -33,7 +34,7 @@ export function Avatar({ hell = false }: { hell?: boolean }) {
 }
 
 /** Schwarze Icon-Leiste mit Beschriftung (HIG H6), ab Tablet sichtbar. */
-export function Seitenleiste() {
+export function Seitenleiste({ nutzer }: { nutzer: NutzerKurz }) {
   const pfad = usePathname();
   return (
     <nav
@@ -51,7 +52,7 @@ export function Seitenleiste() {
               <Link
                 href={href}
                 aria-current={aktiv ? "page" : undefined}
-                className={`pressable group relative flex w-[76px] flex-col items-center gap-1 rounded-md py-2 text-[11px] font-medium ${
+                className={`pressable group relative flex w-[76px] flex-col items-center gap-1 rounded-md py-2 text-[11px] font-semibold ${
                   aktiv ? "text-white" : "text-on-black-muted hover:text-white"
                 }`}
               >
@@ -71,7 +72,7 @@ export function Seitenleiste() {
           );
         })}
       </ul>
-      <Avatar />
+      <Avatar nutzer={nutzer} />
     </nav>
   );
 }
@@ -95,7 +96,7 @@ export function TabLeiste() {
               <Link
                 href={href}
                 aria-current={aktiv ? "page" : undefined}
-                className={`flex h-full flex-col items-center justify-center gap-0.5 text-[10.5px] font-medium ${
+                className={`flex h-full flex-col items-center justify-center gap-0.5 text-[10.5px] font-semibold ${
                   aktiv ? "text-blue" : "text-muted"
                 }`}
               >

@@ -1,5 +1,9 @@
 const tz = "Europe/Berlin";
 
+export function initialen(vorname: string, nachname: string): string {
+  return `${vorname.charAt(0)}${nachname.charAt(0)}`.toUpperCase();
+}
+
 export function formatEuro(betrag: number): string {
   return new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(betrag);
 }
