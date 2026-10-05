@@ -28,6 +28,7 @@ Makler, DSP-Unternehmer und Design. „Empf.“ zeigt, ob die Entscheidung der E
 | D21 | Abrechnung | Manuell per Rechnung, die App zählt die Fahrzeuge | ✅ | |
 | D22 | Design | Fintech-freundlich wie Revolut oder Wise: Weiß, Blau als Akzent | — | Umsetzung mit impeccable im Modus *Operate*. Referenzen liegen in `docs/design-references/`. |
 | D23 | Reihenfolge | M1 Kern → M2 Cortex → M3 Schaden, eVB, Dokumente → M4 Defleeting und Berichte → M5 CoDriver | ✅ | |
+| D24 | Design-Überarbeitung | Reduzierter und minimalistischer als die ersten Entwürfe. Seitenmenü links schwarz. Die Schadensquote als 12 Monatsbalken statt als Plakette. Das Layout legt der Nutzer per Screenshot fest. | — | Bewusst nüchtern; die Hauptfläche bleibt weiß mit Blau als Akzent. |
 
 ## Offen, vor dem Start mit Kunden
 
