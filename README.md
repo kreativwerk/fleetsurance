@@ -29,7 +29,7 @@ insert into public.makler (name) values ('Name des Maklers') returning id;
 insert into public.einladungen (makler_id, email, rolle) values ('<makler-id>', 'admin@makler.de', 'makler_admin');
 ```
 
-Dann die Person unter *Authentication → Users → Invite user* einladen. Nach dem Klick auf den Link wird die Einladung automatisch angenommen.
+Dann die Person unter *Authentication → Users → Invite user* anlegen. Anschließend meldet sie sich unter `/login` mit ihrer Adresse an; beim ersten Login wird die Einladung automatisch angenommen.
 
 ## Entwickeln
 
