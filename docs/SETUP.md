@@ -40,7 +40,9 @@ Geheime Schlüssel (`service_role`, `secret`) nie in den Chat, in Code oder in C
    | `NEXT_PUBLIC_APP_URL` | vorerst leer lassen, siehe C2 |
 
 4. **Deploy** klicken
-5. **Region Frankfurt**: Project → Settings → **Functions** → Function Region: **Frankfurt (fra1)** → Save, danach **Redeploy**
+5. **Region Frankfurt**: ist im Code festgelegt (`apps/web/vercel.json` → `"regions": ["fra1"]`), im Dashboard ist nichts zu tun.
+   - Prüfen nach dem nächsten Deploy: Deployment öffnen → **Functions** → Region zeigt `fra1`
+   - Die Einstellung unter Settings → Functions wird dadurch überschrieben und lässt sich dort nicht speichern. Das ist so gewollt.
 6. **Production-Branch**: Der Code liegt aktuell auf `claude/setup-skills`
    - Entweder diesen Branch nach `main` mergen (Pull Request)
    - Oder Settings → **Git** → Production Branch auf `claude/setup-skills` setzen, solange wir noch bauen
@@ -50,13 +52,13 @@ Geheime Schlüssel (`service_role`, `secret`) nie in den Chat, in Code oder in C
 
 ## C. Supabase und Vercel verbinden
 
-1. Die Vercel-Adresse notieren, z. B. `https://fleetsurance.vercel.app` (später eure eigene Domain)
+1. Die Vercel-Adresse notieren: Project → **Domains**, vermutlich `https://fleetsurance-web.vercel.app` (später eure eigene Domain)
 2. Vercel → Settings → Environment Variables → `NEXT_PUBLIC_APP_URL` = diese Adresse → **Redeploy**
 3. Supabase → Authentication → **URL Configuration**
-   - Site URL: `https://fleetsurance.vercel.app`
+   - Site URL: `https://fleetsurance-web.vercel.app`
    - Redirect URLs (**Add URL**):
-     - `https://fleetsurance.vercel.app/auth/callback`
-     - `https://*-kreativwerk.vercel.app/auth/callback` (für Vorschau-Deployments, euren Team-Slug einsetzen)
+     - `https://fleetsurance-web.vercel.app/auth/callback`
+     - `https://fleetsurance-web-*-kreativwerks-projects.vercel.app/auth/callback` (Vorschau-Deployments)
      - `http://localhost:3000/auth/callback`
 
 ## D. Erster Zugang (Makler-Admin)
