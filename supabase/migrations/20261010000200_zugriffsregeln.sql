@@ -35,6 +35,15 @@ returns boolean language sql stable security definer set search_path = '' as $$
   );
 $$;
 
+-- Ist der angemeldete Nutzer Unternehmens-Admin (DSP-Seite) dieses Unternehmens?
+create or replace function privat.ist_unternehmen_admin_von(p_unternehmen uuid)
+returns boolean language sql stable security definer set search_path = '' as $$
+  select exists (
+    select 1 from public.mitgliedschaften m
+    where m.user_id = (select auth.uid()) and m.unternehmen_id = p_unternehmen and m.rolle = 'unternehmen_admin'
+  );
+$$;
+
 -- Darf der Nutzer die Daten dieses Unternehmens sehen? (eigenes Unternehmen oder betreuender Makler)
 create or replace function privat.darf_unternehmen_sehen(p_unternehmen uuid)
 returns boolean language sql stable security definer set search_path = '' as $$
@@ -63,6 +72,9 @@ grant execute on all functions in schema privat to authenticated;
 create or replace function privat.setze_makler_id()
 returns trigger language plpgsql security definer set search_path = '' as $$
 begin
+  if tg_op = 'UPDATE' and new.unternehmen_id is distinct from old.unternehmen_id then
+    raise exception 'Das Unternehmen eines Datensatzes kann nicht geändert werden';
+  end if;
   select u.makler_id into new.makler_id from public.unternehmen u where u.id = new.unternehmen_id;
   if new.makler_id is null then
     raise exception 'Unbekanntes Unternehmen';
@@ -71,14 +83,43 @@ begin
 end;
 $$;
 
-create trigger fahrzeuge_makler before insert or update of unternehmen_id on public.fahrzeuge
+-- Bei jedem Insert und Update (alle Spalten), damit makler_id nie vom Client kommt.
+create trigger fahrzeuge_makler before insert or update on public.fahrzeuge
   for each row execute function privat.setze_makler_id();
-create trigger schaeden_makler before insert or update of unternehmen_id on public.schaeden
+create trigger schaeden_makler before insert or update on public.schaeden
   for each row execute function privat.setze_makler_id();
-create trigger dauer_evb_makler before insert or update of unternehmen_id on public.dauer_evb
+create trigger dauer_evb_makler before insert or update on public.dauer_evb
   for each row execute function privat.setze_makler_id();
-create trigger monatsquoten_makler before insert or update of unternehmen_id on public.monatsquoten
+create trigger monatsquoten_makler before insert or update on public.monatsquoten
   for each row execute function privat.setze_makler_id();
+
+-- Schadennummer vergibt der Server: zufällig, nicht vom Client wählbar, verrät nichts über andere Mandanten.
+create or replace function privat.schadennummer_vergeben()
+returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  new.nummer := 'SF-' || to_char(now() at time zone 'Europe/Berlin', 'YYYY') || '-'
+    || upper(encode(extensions.gen_random_bytes(4), 'hex'));
+  return new;
+end;
+$$;
+
+create trigger schaeden_nummer before insert on public.schaeden
+  for each row execute function privat.schadennummer_vergeben();
+
+-- Einladungen: Ersteller, Laufzeit und Status setzt der Server.
+create or replace function privat.einladung_vorbereiten()
+returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  new.erstellt_von := (select auth.uid());
+  new.angenommen_am := null;
+  new.gueltig_bis := now() + interval '7 days';
+  new.email := lower(trim(new.email));
+  return new;
+end;
+$$;
+
+create trigger einladung_vorbereiten before insert on public.einladungen
+  for each row execute function privat.einladung_vorbereiten();
 
 -- Nachrichten: Unternehmen, Makler, Autor und Seite kommen vom Server, nicht vom Client.
 create or replace function privat.nachricht_vorbereiten()
@@ -101,6 +142,12 @@ begin
   end if;
   new.erstellt_am := now();
   new.zurueckgezogen_am := null;
+  -- Anhänge kommen später nur über den Server (Storage-Pfad unternehmen/schaden/…), nie vom Client.
+  if new.typ = 'nachricht' then
+    new.anhang_pfad := null;
+    new.anhang_name := null;
+    new.anhang_groesse_kb := null;
+  end if;
   return new;
 end;
 $$;
@@ -236,15 +283,16 @@ create policy mitgliedschaften_lesen on public.mitgliedschaften for select to au
 create policy einladungen_lesen on public.einladungen for select to authenticated
   using (privat.ist_makler_admin_von(makler_id));
 create policy einladungen_anlegen on public.einladungen for insert to authenticated
-  with check (privat.ist_makler_admin_von(makler_id) and erstellt_von = (select auth.uid()));
+  with check (privat.ist_makler_admin_von(makler_id));
 
--- Fahrzeuge: sehen beide Seiten; pflegen der DSP (Unternehmens-Admin) und der Makler.
+-- Fahrzeuge: sehen beide Seiten; pflegen nur Unternehmens-Admin und Makler (Importe laufen über den Server).
 create policy fahrzeuge_lesen on public.fahrzeuge for select to authenticated
   using (privat.darf_unternehmen_sehen(unternehmen_id));
 create policy fahrzeuge_schreiben on public.fahrzeuge for insert to authenticated
-  with check (privat.darf_unternehmen_sehen(unternehmen_id));
+  with check (privat.ist_unternehmen_admin_von(unternehmen_id) or privat.ist_makler_von(makler_id));
 create policy fahrzeuge_aendern on public.fahrzeuge for update to authenticated
-  using (privat.darf_unternehmen_sehen(unternehmen_id)) with check (privat.darf_unternehmen_sehen(unternehmen_id));
+  using (privat.ist_unternehmen_admin_von(unternehmen_id) or privat.ist_makler_von(makler_id))
+  with check (privat.ist_unternehmen_admin_von(unternehmen_id) or privat.ist_makler_von(makler_id));
 
 -- Schäden: beide Seiten lesen und melden; Status und Bearbeitung nur durch den Makler.
 create policy schaeden_lesen on public.schaeden for select to authenticated
@@ -291,8 +339,9 @@ create policy quoten_pflegen on public.monatsquoten for all to authenticated
   using (exists (select 1 from public.unternehmen u where u.id = unternehmen_id and privat.ist_makler_von(u.makler_id)))
   with check (exists (select 1 from public.unternehmen u where u.id = unternehmen_id and privat.ist_makler_von(u.makler_id)));
 
--- Keine Rechte für anonyme Zugriffe.
-revoke all on all tables in schema public from anon;
+-- Rechte ausdrücklich vergeben: anon nichts, authenticated nur select/insert/update (RLS entscheidet).
+revoke all on all tables in schema public from anon, authenticated;
+revoke all on all sequences in schema public from anon, authenticated;
 grant select, insert, update on all tables in schema public to authenticated;
 revoke all on public.audit_log from authenticated;
 grant delete on public.dauer_evb, public.monatsquoten to authenticated;

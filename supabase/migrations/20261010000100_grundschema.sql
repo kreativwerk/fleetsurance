@@ -2,7 +2,15 @@
 -- Mandanten: Makler → Unternehmen → Fahrzeuge/Schäden. Zugriff ausschließlich über RLS.
 -- Kreativwerk (Betreiber) hat keine Rolle mit Lesezugriff auf Fachdaten.
 
-create extension if not exists pgcrypto;
+-- Auf Supabase liegt pgcrypto bereits im Schema „extensions“.
+create schema if not exists extensions;
+create extension if not exists pgcrypto with schema extensions;
+
+-- Supabase vergibt auf neue Tabellen/Funktionen in public standardmäßig alle Rechte an anon/authenticated.
+-- Das schalten wir ab: Rechte werden nur ausdrücklich vergeben (siehe zugriffsregeln.sql).
+alter default privileges in schema public revoke all on tables from anon, authenticated;
+alter default privileges in schema public revoke all on sequences from anon, authenticated;
+alter default privileges in schema public revoke execute on functions from anon, authenticated, public;
 
 -- ---------------------------------------------------------------------------
 -- Aufzählungen
@@ -34,7 +42,9 @@ create table public.unternehmen (
   makler_id uuid not null references public.makler (id) on delete restrict,
   name text not null check (length(name) between 1 and 200),
   station text,
-  erstellt_am timestamptz not null default now()
+  erstellt_am timestamptz not null default now(),
+  -- Ziel für zusammengesetzte Fremdschlüssel: Unternehmen gehört genau zu diesem Makler.
+  unique (id, makler_id)
 );
 create index on public.unternehmen (makler_id);
 
@@ -47,6 +57,9 @@ create table public.mitgliedschaften (
   vorname text,
   nachname text,
   erstellt_am timestamptz not null default now(),
+  -- Ein Unternehmen in der Mitgliedschaft muss zum selben Makler gehören.
+  constraint mitgliedschaft_unternehmen_des_maklers
+    foreign key (unternehmen_id, makler_id) references public.unternehmen (id, makler_id) on delete cascade,
   constraint mitgliedschaft_rolle_passt check (
     (rolle in ('makler_admin', 'makler_mitarbeiter') and unternehmen_id is null)
     or (rolle in ('unternehmen_admin', 'fuhrparkleitung') and unternehmen_id is not null)
@@ -67,6 +80,9 @@ create table public.einladungen (
   angenommen_am timestamptz,
   erstellt_von uuid references auth.users (id) on delete set null,
   erstellt_am timestamptz not null default now(),
+  -- Makler können nur in eigene Unternehmen einladen.
+  constraint einladung_unternehmen_des_maklers
+    foreign key (unternehmen_id, makler_id) references public.unternehmen (id, makler_id) on delete cascade,
   constraint einladung_rolle_passt check (
     (rolle in ('makler_admin', 'makler_mitarbeiter') and unternehmen_id is null)
     or (rolle in ('unternehmen_admin', 'fuhrparkleitung') and unternehmen_id is not null)
@@ -91,17 +107,20 @@ create table public.fahrzeuge (
   status public.fahrzeug_status not null default 'aktiv',
   standort text,
   erstellt_am timestamptz not null default now(),
-  unique (unternehmen_id, kennzeichen)
+  unique (unternehmen_id, kennzeichen),
+  -- Ziel für den Fremdschlüssel aus schaeden: Fahrzeug gehört zu genau diesem Unternehmen.
+  unique (id, unternehmen_id)
 );
 create unique index fahrzeuge_fin_je_unternehmen on public.fahrzeuge (unternehmen_id, fin) where fin is not null;
 create index on public.fahrzeuge (makler_id);
 
 create table public.schaeden (
   id uuid primary key default gen_random_uuid(),
+  -- Wird vom Server vergeben (Trigger), zufällig, damit keine Rückschlüsse auf andere Mandanten möglich sind.
   nummer text not null unique,
   unternehmen_id uuid not null references public.unternehmen (id) on delete cascade,
   makler_id uuid not null references public.makler (id),
-  fahrzeug_id uuid not null references public.fahrzeuge (id) on delete restrict,
+  fahrzeug_id uuid not null,
   am timestamptz not null,
   ort text,
   art text not null,
@@ -111,7 +130,10 @@ create table public.schaeden (
   schadensnummer_versicherer text,
   aufwand_geschaetzt_cent bigint check (aufwand_geschaetzt_cent >= 0),
   erstellt_von uuid references auth.users (id) on delete set null,
-  erstellt_am timestamptz not null default now()
+  erstellt_am timestamptz not null default now(),
+  -- Ein Schaden kann nur ein Fahrzeug desselben Unternehmens betreffen.
+  constraint schaden_fahrzeug_des_unternehmens
+    foreign key (fahrzeug_id, unternehmen_id) references public.fahrzeuge (id, unternehmen_id) on delete restrict
 );
 create index on public.schaeden (unternehmen_id, am desc);
 create index on public.schaeden (makler_id);

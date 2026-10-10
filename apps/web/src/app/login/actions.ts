@@ -1,6 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
 import { supabaseAktiv } from "@/lib/supabase/konfig";
 import { supabaseServer } from "@/lib/supabase/server";
 
@@ -21,12 +20,18 @@ export async function sendeLoginLink(_vorher: LoginZustand, formular: FormData):
     return { status: "fehler", meldung: "Im Demo-Modus ist keine Anmeldung nötig." };
   }
 
-  const kopf = await headers();
-  const basis = process.env.NEXT_PUBLIC_APP_URL ?? `https://${kopf.get("host")}`;
+  // Die Rücksprungadresse kommt nie aus dem Host-Header (Schutz vor Umleitung des Login-Links).
+  const basis = process.env.NEXT_PUBLIC_APP_URL;
+  if (!basis) {
+    if (process.env.NODE_ENV === "production") {
+      return { status: "fehler", meldung: "Die Anmeldung ist noch nicht vollständig eingerichtet (NEXT_PUBLIC_APP_URL fehlt)." };
+    }
+  }
+  const ziel = basis ?? "http://localhost:3000";
   const sb = await supabaseServer();
   const { error } = await sb.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: false, emailRedirectTo: `${basis}/auth/callback` },
+    options: { shouldCreateUser: false, emailRedirectTo: `${ziel}/auth/callback` },
   });
   if (error && error.status === 429) {
     return { status: "fehler", meldung: "Zu viele Versuche. Bitte warte einen Moment." };

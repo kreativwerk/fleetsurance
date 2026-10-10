@@ -127,8 +127,11 @@ insert into public.schaeden (nummer, unternehmen_id, makler_id, fahrzeug_id, am,
 values ('SF-TEST-A1-NEU', '20000000-0000-0000-0000-0000000000a1', '10000000-0000-0000-0000-00000000000a',
         '30000000-0000-0000-0000-0000000000a1', now(), 'Glasbruch', 'reguliert', 'GEFAELSCHT');
 select test.gleich(
-  (select count(*) from public.schaeden where nummer = 'SF-TEST-A1-NEU' and status = 'gemeldet' and schadensnummer_versicherer is null),
+  (select count(*) from public.schaeden where art = 'Glasbruch' and status = 'gemeldet' and schadensnummer_versicherer is null),
   1, 'DSP-Meldung startet immer als „gemeldet“');
+select test.gleich(
+  (select count(*) from public.schaeden where art = 'Glasbruch' and nummer ~ '^SF-[0-9]{4}-[0-9A-F]{8}$'),
+  1, 'Schadennummer vergibt der Server, nicht der Client');
 select test.verboten($$insert into public.schaeden (nummer, unternehmen_id, makler_id, fahrzeug_id, am, art)
   values ('SF-TEST-FREMD', '20000000-0000-0000-0000-0000000000b1', '10000000-0000-0000-0000-00000000000b',
           '30000000-0000-0000-0000-0000000000b1', now(), 'Diebstahl')$$, 'DSP meldet Schaden für fremdes Unternehmen');

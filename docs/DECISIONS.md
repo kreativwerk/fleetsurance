@@ -38,6 +38,8 @@ Makler, DSP-Unternehmer und Design. „Empf.“ zeigt, ob die Entscheidung der E
 
 ## Offen, vor dem Start mit Kunden
 
+- [ ] Lesezugriffe protokollieren (CLAUDE.md: „Audit-Log für jeden Zugriff“). Bisher werden nur Änderungen protokolliert. Lösung in M1, z. B. über Server-Logging je Aktenaufruf.
+
 - [ ] Repo `kreativwerk/fleetsurance` auf **privat** stellen.
 - [ ] Mit dem Datenschutzbeauftragten: AVV-Vorlage für Makler, Datenschutz-Folgenabschätzung (DSFA), Standardwerte für Löschfristen, Liste der Unterauftragsverarbeiter (Supabase, Vercel, Mailanbieter, Google OAuth).
 - [ ] Klären, wem die Marke „Fleetsurance“ gehört (Kreativwerk oder SUM).

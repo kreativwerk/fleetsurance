@@ -4,11 +4,14 @@ create or replace function public.einladungen_annehmen()
 returns integer language plpgsql security definer set search_path = '' as $$
 declare
   v_uid uuid := (select auth.uid());
-  v_email text := lower(coalesce((select auth.jwt()) ->> 'email', ''));
+  v_email text;
   v_anzahl integer := 0;
   e record;
 begin
-  if v_uid is null or v_email = '' then
+  -- Adresse aus auth.users statt aus dem JWT: nur bestätigt und nicht anonym.
+  select lower(u.email) into v_email from auth.users u
+  where u.id = v_uid and u.email_confirmed_at is not null and not coalesce(u.is_anonymous, false);
+  if v_uid is null or coalesce(v_email, '') = '' then
     raise exception 'Nicht angemeldet';
   end if;
   for e in
