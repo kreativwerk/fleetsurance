@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronDown, Plus, Search } from "lucide-react";
 import { Avatar, Logo } from "./shell";
 export { FahrzeugStatusPille, Pille, SchadenStatusPille } from "./pillen";
-import { nutzerKurz, testdaten } from "@/lib/daten";
+import { ladeKontext } from "@/lib/daten";
 
 export function Karte({
   children,
@@ -31,8 +31,7 @@ export function SchadenMeldenKnopf({ breit = false }: { breit?: boolean }) {
   );
 }
 
-function FirmenPille() {
-  const { name, station } = testdaten.unternehmen;
+function FirmenPille({ name, station }: { name: string; station: string }) {
   return (
     <button
       type="button"
@@ -41,7 +40,7 @@ function FirmenPille() {
     >
       <span className="truncate">
         {name}
-        <span className="hidden text-muted lg:inline"> · Station {station}</span>
+        {station && <span className="hidden text-muted lg:inline"> · Station {station}</span>}
       </span>
       <ChevronDown className="size-4 shrink-0 text-muted" aria-hidden />
     </button>
@@ -52,7 +51,7 @@ function FirmenPille() {
  * Seitenkopf: Desktop mit Titel, Firmenwahl, Suche und Hauptaktion;
  * mobil als iOS-Navigationsleiste mit großem Titel und ＋ oben rechts (HIG H1).
  */
-export function Seitenkopf({
+export async function Seitenkopf({
   titel,
   mobilTitel,
   untertitel,
@@ -63,12 +62,14 @@ export function Seitenkopf({
   untertitel?: string;
   aktion?: boolean;
 }) {
+  const kontext = await ladeKontext();
+  const firma = kontext.unternehmen;
   return (
     <header className="mb-5 md:mb-7">
       <div className="flex items-center gap-3 md:hidden">
         <Logo klein />
         <div className="min-w-0 flex-1">
-          <FirmenPille />
+          {firma && <FirmenPille name={firma.name} station={firma.station} />}
         </div>
         {aktion && (
           <Link
@@ -81,7 +82,7 @@ export function Seitenkopf({
             </svg>
           </Link>
         )}
-        <Avatar nutzer={nutzerKurz()} hell />
+        <Avatar nutzer={kontext.nutzer} hell />
       </div>
       <div className="mt-4 flex items-center gap-4 md:mt-0">
         <div className="min-w-0">
@@ -92,7 +93,7 @@ export function Seitenkopf({
           {untertitel && <p className="mt-0.5 text-[15px] text-muted">{untertitel}</p>}
         </div>
         <div className="ml-2 hidden md:block">
-          <FirmenPille />
+          {firma && <FirmenPille name={firma.name} station={firma.station} />}
         </div>
         <div className="ml-auto hidden items-center gap-3 md:flex">
           <label className="relative hidden xl:block">

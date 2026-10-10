@@ -46,6 +46,7 @@ export function SchadenAkte(props: {
   lesestatus: Lesestatus[];
   seite: Seite;
   autor: string;
+  live: boolean;
 }) {
   const { schaden, fahrzeug } = props;
   const [ansicht, setAnsicht] = useState<Ansicht>("details");
@@ -139,6 +140,7 @@ export function SchadenAkte(props: {
             lesestatus={props.lesestatus}
             seite={props.seite}
             autor={props.autor}
+            live={props.live}
           />
         </div>
       </div>

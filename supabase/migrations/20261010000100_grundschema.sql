@@ -62,8 +62,7 @@ create table public.einladungen (
   unternehmen_id uuid references public.unternehmen (id) on delete cascade,
   email text not null check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
   rolle public.rolle not null,
-  -- Nur der Hash des Tokens wird gespeichert; das Token selbst steht nur im Link.
-  token_hash text not null unique,
+  -- Angenommen wird per bestätigter E-Mail-Adresse (Login-Link), kein eigenes Token nötig.
   gueltig_bis timestamptz not null default now() + interval '7 days',
   angenommen_am timestamptz,
   erstellt_von uuid references auth.users (id) on delete set null,

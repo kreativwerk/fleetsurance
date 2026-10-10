@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { LicensePlate } from "@fleetsurance/ui";
-import { formatDatum, type Schaden } from "@fleetsurance/domain";
-import { fahrzeugZu } from "@/lib/daten";
+import { formatDatum } from "@fleetsurance/domain";
+import type { SchadenMitFahrzeug } from "@/lib/daten";
 import { SchadenStatusPille } from "./ui";
 import { ZeilenPfeil } from "./karten";
 
 /** Schäden als Tabelle (ab Tablet) bzw. als Liste (mobil). */
-export function SchadenListe({ schaeden }: { schaeden: Schaden[] }) {
+export function SchadenListe({ schaeden }: { schaeden: SchadenMitFahrzeug[] }) {
   return (
     <>
       <table className="hidden w-full text-left text-[14.5px] md:table">
@@ -21,7 +21,7 @@ export function SchadenListe({ schaeden }: { schaeden: Schaden[] }) {
         </thead>
         <tbody>
           {schaeden.map((s) => {
-            const f = fahrzeugZu(s);
+            const f = s.fahrzeug;
             return (
               <tr key={s.id} className="group relative border-b border-hairline last:border-0 hover:bg-fill-subtle/60 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 has-[a:focus-visible]:outline-blue">
                 <td className="tabular py-3 pr-4 whitespace-nowrap text-ink-2">{formatDatum(s.am)}</td>
@@ -47,7 +47,7 @@ export function SchadenListe({ schaeden }: { schaeden: Schaden[] }) {
 
       <ul className="space-y-2.5 md:hidden">
         {schaeden.map((s) => {
-          const f = fahrzeugZu(s);
+          const f = s.fahrzeug;
           return (
             <li key={s.id}>
               <Link

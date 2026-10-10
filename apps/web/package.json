@@ -15,6 +15,8 @@
     "@fleetsurance/ui": "workspace:*",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/barlow-condensed": "^5.3.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.3",
     "lucide-react": "^1.52.0",
     "motion": "^14.0.0",
     "next": "15.5.27",

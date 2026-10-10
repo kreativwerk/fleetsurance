@@ -5,7 +5,7 @@ import { Abschnittstitel, Karte, SchadenMeldenKnopf, Seitenkopf } from "@/compon
 import { QuoteDiagramm } from "@/components/quote-diagramm";
 import { DauerEvbKarte, MaklerKarte } from "@/components/karten";
 import { SchadenListe } from "@/components/schaden-liste";
-import { offeneSchaeden, schaedenNeuesteZuerst, testdaten } from "@/lib/daten";
+import { istOffen, ladeDauerEvb, ladeFahrzeuge, ladeKontext, ladeQuoten, ladeSchaeden } from "@/lib/daten";
 
 export const metadata = { title: "Übersicht" };
 
@@ -16,30 +16,43 @@ function gruss(): string {
   return stunde < 11 ? "Guten Morgen" : stunde < 18 ? "Guten Tag" : "Guten Abend";
 }
 
-export default function Uebersicht() {
-  const { aktuell, vorjahr, ziel, jahr } = testdaten.quoteJahr;
-  const delta = veraenderungPunkte(aktuell, vorjahr);
-  const besser = delta <= 0;
-  const fahrzeuge = testdaten.fahrzeuge.filter((f) => f.status !== "defleeted");
-  const offen = offeneSchaeden();
+export default async function Uebersicht() {
+  const [kontext, quoten, alleFahrzeuge, schaeden, evbs] = await Promise.all([
+    ladeKontext(),
+    ladeQuoten(),
+    ladeFahrzeuge(),
+    ladeSchaeden(),
+    ladeDauerEvb(),
+  ]);
+  const { aktuell, vorjahr, ziel, jahr, monate } = quoten;
+  const delta = aktuell !== null && vorjahr !== null ? veraenderungPunkte(aktuell, vorjahr) : null;
+  const besser = delta !== null && delta <= 0;
+  const fahrzeuge = alleFahrzeuge.filter((f) => f.status !== "defleeted");
+  const offen = schaeden.filter(istOffen);
 
   return (
     <>
-      <Seitenkopf titel="Übersicht" mobilTitel={`${gruss()}, ${testdaten.nutzer.vorname}`} />
+      <Seitenkopf titel="Übersicht" mobilTitel={`${gruss()}, ${kontext.nutzer.vorname}`} />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)] lg:gap-5">
         <div className="min-w-0 space-y-4 lg:space-y-5">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:gap-5">
             <Karte className="col-span-2 p-5 md:col-span-1">
               <h2 className="text-[15px] font-semibold">Schadensquote {jahr}</h2>
-              <p className="tabular tracking-display mt-1 text-[44px] leading-none font-bold md:text-[40px]">{aktuell} %</p>
-              <p className={`mt-2 inline-flex items-center gap-1 text-[14px] font-semibold ${besser ? "text-ok" : "text-error"}`}>
-                {besser ? <ArrowDown className="size-4" aria-hidden /> : <ArrowUp className="size-4" aria-hidden />}
-                <span className="sr-only">{besser ? "Gesunken um" : "Gestiegen um"}</span>
-                {Math.abs(delta)} Pkt. <span className="font-normal text-muted">ggü. Vorjahr</span>
+              <p className="tabular tracking-display mt-1 text-[44px] leading-none font-bold md:text-[40px]">
+                {aktuell === null ? "–" : `${aktuell} %`}
               </p>
+              {delta === null ? (
+                <p className="mt-2 text-[14px] text-muted">Noch keine Vergleichsdaten vom Makler</p>
+              ) : (
+                <p className={`mt-2 inline-flex items-center gap-1 text-[14px] font-semibold ${besser ? "text-ok" : "text-error"}`}>
+                  {besser ? <ArrowDown className="size-4" aria-hidden /> : <ArrowUp className="size-4" aria-hidden />}
+                  <span className="sr-only">{besser ? "Gesunken um" : "Gestiegen um"}</span>
+                  {Math.abs(delta)} Pkt. <span className="font-normal text-muted">ggü. Vorjahr</span>
+                </p>
+              )}
               <div className="mt-4 md:hidden">
-                <QuoteDiagramm quoten={testdaten.monatsquoten2026} ziel={ziel} kompakt />
+                <QuoteDiagramm quoten={monate} ziel={ziel} kompakt />
               </div>
             </Karte>
 
@@ -50,7 +63,7 @@ export default function Uebersicht() {
             <Kennzahl
               titel="Fahrzeuge"
               wert={fahrzeuge.length}
-              hinweis={`im Bestand · ${testdaten.fahrzeuge.length - fahrzeuge.length} defleeted`}
+              hinweis={`im Bestand · ${alleFahrzeuge.length - fahrzeuge.length} defleeted`}
               icon={<Truck className="size-6" strokeWidth={1.6} aria-hidden />}
               href="/flotte"
             />
@@ -66,27 +79,35 @@ export default function Uebersicht() {
           <Karte className="hidden p-6 md:block">
             <Abschnittstitel>Schadensquote nach Monat</Abschnittstitel>
             <div className="pt-4">
-              <QuoteDiagramm quoten={testdaten.monatsquoten2026} ziel={ziel} />
+              <QuoteDiagramm quoten={monate} ziel={ziel} />
             </div>
           </Karte>
 
-          <div className="lg:hidden">
-            <DauerEvbKarte evbs={testdaten.dauerEvb} />
-          </div>
+          {evbs.length > 0 && (
+            <div className="lg:hidden">
+              <DauerEvbKarte evbs={evbs} />
+            </div>
+          )}
 
           <section className="pt-2 md:rounded-card md:border md:border-hairline md:bg-surface md:p-6 md:pt-6">
             <Abschnittstitel aktion={<AlleLink />}>Letzte Schäden</Abschnittstitel>
-            <SchadenListe schaeden={schaedenNeuesteZuerst().slice(0, 5)} />
+            {schaeden.length === 0 ? (
+              <p className="py-6 text-center text-[15px] text-muted">Noch keine Schäden gemeldet.</p>
+            ) : (
+              <SchadenListe schaeden={schaeden.slice(0, 5)} />
+            )}
           </section>
 
-          <div className="lg:hidden">
-            <MaklerKarte makler={testdaten.makler} />
-          </div>
+          {kontext.makler && (
+            <div className="lg:hidden">
+              <MaklerKarte makler={kontext.makler} />
+            </div>
+          )}
         </div>
 
         <aside className="hidden space-y-5 lg:block" aria-label="Dauer-eVB und Makler">
-          <DauerEvbKarte evbs={testdaten.dauerEvb} />
-          <MaklerKarte makler={testdaten.makler} />
+          {evbs.length > 0 && <DauerEvbKarte evbs={evbs} />}
+          {kontext.makler && <MaklerKarte makler={kontext.makler} />}
         </aside>
       </div>
     </>

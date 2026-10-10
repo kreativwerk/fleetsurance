@@ -2,7 +2,8 @@ import Link from "next/link";
 import { BarChart3, Database, FileText, Settings, UserRound } from "lucide-react";
 import { Seitenkopf } from "@/components/ui";
 import { DauerEvbKarte, MaklerKarte, ZeilenPfeil } from "@/components/karten";
-import { nutzerKurz, testdaten } from "@/lib/daten";
+import { ladeDauerEvb, ladeKontext } from "@/lib/daten";
+import { AbmeldenKnopf } from "@/components/abmelden";
 
 export const metadata = { title: "Mehr" };
 
@@ -13,12 +14,13 @@ const eintraege = [
   { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ] as const;
 
-export default function Mehr() {
+export default async function Mehr() {
+  const [kontext, evbs] = await Promise.all([ladeKontext(), ladeDauerEvb()]);
   return (
     <>
       <Seitenkopf titel="Mehr" />
       <div className="space-y-4">
-        <DauerEvbKarte evbs={testdaten.dauerEvb} />
+        {evbs.length > 0 && <DauerEvbKarte evbs={evbs} />}
         <nav aria-label="Weitere Bereiche" className="overflow-hidden rounded-card border border-hairline bg-surface">
           <ul>
             {eintraege.map(({ href, label, icon: Icon }) => (
@@ -34,11 +36,12 @@ export default function Mehr() {
             ))}
           </ul>
         </nav>
-        <MaklerKarte makler={testdaten.makler} />
+        {kontext.makler && <MaklerKarte makler={kontext.makler} />}
         <p className="flex items-center justify-center gap-2 pt-2 text-[13px] text-muted">
           <UserRound className="size-4" aria-hidden />
-          Angemeldet als {nutzerKurz().name} · {nutzerKurz().rolle}
+          Angemeldet als {kontext.nutzer.name} · {kontext.nutzer.rolle}
         </p>
+        {kontext.modus === "live" && <AbmeldenKnopf />}
       </div>
     </>
   );

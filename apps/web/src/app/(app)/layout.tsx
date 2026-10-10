@@ -1,8 +1,10 @@
 import { Seitenleiste, TabLeiste } from "@/components/shell";
 import { Providers } from "@/components/providers";
-import { nutzerKurz } from "@/lib/daten";
+import { DemoHinweis } from "@/components/demo-hinweis";
+import { ladeKontext } from "@/lib/daten";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const kontext = await ladeKontext();
   return (
     <Providers>
       <a
@@ -11,9 +13,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       >
         Zum Inhalt springen
       </a>
-      <Seitenleiste nutzer={nutzerKurz()} />
+      <Seitenleiste nutzer={kontext.nutzer} />
       <main id="inhalt" className="pb-[calc(76px+env(safe-area-inset-bottom))] md:pb-0 md:pl-[92px]">
-        <div className="mx-auto w-full max-w-[1480px] px-4 pt-3 pb-8 sm:px-6 md:px-8 md:pt-7">{children}</div>
+        <div className="mx-auto w-full max-w-[1480px] px-4 pt-3 pb-8 sm:px-6 md:px-8 md:pt-7">
+          {kontext.modus === "demo" && <DemoHinweis />}
+          {children}
+        </div>
       </main>
       <TabLeiste />
     </Providers>

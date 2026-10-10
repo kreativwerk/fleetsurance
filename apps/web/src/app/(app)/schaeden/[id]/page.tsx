@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { aktuelleSeite, fahrzeugZu, schadenNachId, testdaten } from "@/lib/daten";
+import { ladeAkte, ladeKontext } from "@/lib/daten";
 import { SchadenAkte } from "./akte";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -9,23 +9,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function SchadenSeite({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const schaden = schadenNachId(id);
-  if (!schaden) notFound();
-
-  // Interne Makler-Notizen verlassen den Server nicht, wenn ein DSP schaut (in M3 per RLS).
-  const nachrichten = testdaten.nachrichten.filter(
-    (n) => n.schadenId === id && (n.sichtbarkeit === "alle" || aktuelleSeite === "makler"),
-  );
-  const { vorname, nachname } = testdaten.nutzer;
+  const [akte, kontext] = await Promise.all([ladeAkte(decodeURIComponent(id)), ladeKontext()]);
+  if (!akte) notFound();
 
   return (
     <SchadenAkte
-      schaden={schaden}
-      fahrzeug={fahrzeugZu(schaden)}
-      nachrichten={nachrichten}
-      lesestatus={testdaten.lesestatus.filter((l) => l.schadenId === id)}
-      seite={aktuelleSeite}
-      autor={`${vorname} ${nachname}`}
+      schaden={akte.schaden}
+      fahrzeug={akte.schaden.fahrzeug}
+      nachrichten={akte.nachrichten}
+      lesestatus={akte.lesestatus}
+      seite={kontext.nutzer.seite}
+      autor={kontext.nutzer.name}
+      live={kontext.modus === "live"}
     />
   );
 }

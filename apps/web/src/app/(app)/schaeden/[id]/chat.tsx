@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUp, FileText, Paperclip, X } from "lucide-react";
 import {
@@ -14,12 +14,14 @@ import {
   type Nachricht,
   type Seite,
 } from "@fleetsurance/domain";
+import { useToast } from "@/components/toast";
+import { markiereGelesen, sendeNachricht } from "./actions";
 
 const gegenseiteName: Record<Seite, string> = { dsp: "DSP", makler: "Makler" };
 
 /**
- * Chat pro Schadensfall (D26). M0: neue Nachrichten leben nur im Zustand der Seite (kein Speichern).
- * Ab M3: Supabase Realtime, Anhänge im privaten Storage (Fotos ohne EXIF), interne Notizen per RLS.
+ * Chat pro Schadensfall (D26). Live: Nachrichten werden in Supabase gespeichert (RLS, Trigger setzen Seite/Autor).
+ * Demo: Nachrichten leben nur im Zustand der Seite. Anhänge im privaten Storage und Realtime folgen in M3.
  */
 export function SchadenChat({
   schadenId,
@@ -27,13 +29,17 @@ export function SchadenChat({
   lesestatus,
   seite,
   autor,
+  live,
 }: {
   schadenId: string;
   start: Nachricht[];
   lesestatus: Lesestatus[];
   seite: Seite;
   autor: string;
+  live: boolean;
 }) {
+  const { zeige } = useToast();
+  const [, starte] = useTransition();
   const [nachrichten, setNachrichten] = useState(start);
   const [text, setText] = useState("");
   const [anhang, setAnhang] = useState<Dokument | null>(null);
@@ -48,16 +54,21 @@ export function SchadenChat({
   const gelesenId = vonGegenseiteGelesen(nachrichten, lesestatus, seite, schadenId);
 
   useEffect(() => {
+    void markiereGelesen(schadenId);
+  }, [schadenId]);
+
+  useEffect(() => {
     ende.current?.scrollIntoView({ behavior: reduziert ? "auto" : "smooth", block: "end" });
   }, [sichtbar.length, reduziert]);
 
   function senden() {
     const inhalt = text.trim();
     if (!inhalt && !anhang) return;
+    const lokaleId = `lokal-${crypto.randomUUID()}`;
     setNachrichten((alt) => [
       ...alt,
       {
-        id: `lokal-${alt.length + 1}`,
+        id: lokaleId,
         schadenId,
         typ: "nachricht",
         seite,
@@ -70,6 +81,18 @@ export function SchadenChat({
     ]);
     setText("");
     setAnhang(null);
+    if (!inhalt) return;
+
+    starte(async () => {
+      const ergebnis = await sendeNachricht(schadenId, inhalt);
+      if (ergebnis.ok) {
+        setNachrichten((alt) => alt.map((n) => (n.id === lokaleId ? { ...n, id: ergebnis.id, am: ergebnis.am } : n)));
+      } else {
+        setNachrichten((alt) => alt.filter((n) => n.id !== lokaleId));
+        setText(inhalt);
+        zeige(ergebnis.fehler);
+      }
+    });
   }
 
   return (
@@ -140,9 +163,10 @@ export function SchadenChat({
           />
           <button
             type="button"
-            onClick={() => datei.current?.click()}
+            onClick={() => (live ? zeige("Anhänge folgen mit dem sicheren Dateispeicher (M3).") : datei.current?.click())}
             className="pressable grid size-11 shrink-0 place-items-center rounded-full bg-fill-subtle text-ink-2 hover:bg-fill"
             aria-label="Foto oder Dokument anhängen"
+            aria-disabled={live || undefined}
           >
             <Paperclip className="size-5" aria-hidden />
           </button>
