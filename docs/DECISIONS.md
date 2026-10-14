@@ -35,6 +35,7 @@ Makler, DSP-Unternehmer und Design. „Empf.“ zeigt, ob die Entscheidung der E
 | D28 | Supabase-Projekt | Eigenes Projekt „Fleetsurance“ in der Organisation „Kreativwerk Agentur“ (Pro), Region Frankfurt. Der Nutzer legt es im Dashboard an, weil das Anlegen über die Verbindung dreimal mit Zeitüberschreitung abbrach. Bis dahin wird gegen ein lokales Postgres entwickelt und getestet. | ✅ | Migrationen liegen in `supabase/migrations` und werden mit einem Befehl eingespielt. |
 | D29 | Google-Login | Kommt später. V1 startet mit Anmeldung per E-Mail-Link. | — | Google braucht einen OAuth-Client in der Google Cloud von Kreativwerk. |
 | D30 | E-Mail-Versand | Vorerst über den eingebauten Testversand von Supabase (geringes Limit, nur Entwicklung). Ein EU-Anbieter (z. B. Brevo) folgt vor dem ersten Kunden. | ⚠️ | **Risiko:** Der Testversand ist nicht für den Produktivbetrieb gedacht. |
+| D31 | Domain | Vorerst `fleetsurance-web.vercel.app`. Eine eigene Domain kommt vor dem ersten Kunden. Sie liegt beim Inhaber der Marke, der Wechsel dauert etwa 10 Minuten (Vercel-Domain, `NEXT_PUBLIC_APP_URL`, Supabase-URLs). | ✅ | Gebraucht für Vertrauen und für den E-Mail-Versand über den EU-Anbieter (SPF/DKIM). |
 
 ## Offen, vor dem Start mit Kunden
 
@@ -42,5 +43,5 @@ Makler, DSP-Unternehmer und Design. „Empf.“ zeigt, ob die Entscheidung der E
 
 - [ ] Repo `kreativwerk/fleetsurance` auf **privat** stellen.
 - [ ] Mit dem Datenschutzbeauftragten: AVV-Vorlage für Makler, Datenschutz-Folgenabschätzung (DSFA), Standardwerte für Löschfristen, Liste der Unterauftragsverarbeiter (Supabase, Vercel, Mailanbieter, Google OAuth).
-- [ ] Klären, wem die Marke „Fleetsurance“ gehört (Kreativwerk oder SUM).
+- [ ] Klären, wem die Marke „Fleetsurance“ gehört (Kreativwerk oder SUM). Danach die Domain kaufen und umstellen (D31).
 - [ ] Anonymisierte Beispieldateien bereitstellen: Cortex-Export und Schadenliste eines Versicherers.
